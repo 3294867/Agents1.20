@@ -1,0 +1,33 @@
+.env
+node_modules
+dist
+.vscode/*
+!.vscode/extensions.json
+
+# Client
+
+## Logs
+logs
+*.log
+npm-debug.log*
+lerna-debug.log*
+.vite
+node_modules
+dist-ssr
+*.local
+
+## Editor directories and files
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Server
+
+## Express
+
+## FastAPI
+.venv

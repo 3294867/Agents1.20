@@ -6,7 +6,7 @@ interface Props {
   input: string;
 }
 
-const createResponse = async ({ agentId, agentModel, input }: Props): Promise<{ type: string, output: string}> => {
+const createResponse = async ({ agentId, agentModel, input }: Props): Promise<{ responseBody: string, responseBodyType: string }> => {
   try {
     const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/create-response`, {
       method: 'POST',
@@ -14,12 +14,9 @@ const createResponse = async ({ agentId, agentModel, input }: Props): Promise<{ 
       body: JSON.stringify({ agentId, agentModel, input })
     });
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to get response: ${response.status} ${response.statusText} - ${errorText}`);
-    }
+    if (!response.ok) throw new Error(`Failed to get response: ${response.text()}`);
     
-    const body: { message: string, data: { type: string, output: string} | null } = await response.json();
+    const body: { message: string, data: { responseBody: string, responseBodyType: string } | null } = await response.json();
     if (!body.data) throw new Error(body.message);
     
     return body.data;

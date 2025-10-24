@@ -14,7 +14,6 @@ const createResponse = async ({ input }: Props): Promise<string> => {
   }
 
   const body: { message: string, data: string | null } = await response.json();
-
   if (!body.data) throw new Error(`Failed to get response (FastAPI): ${body.message}`);
 
   return body.data;

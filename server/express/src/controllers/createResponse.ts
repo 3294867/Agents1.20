@@ -24,11 +24,18 @@ const createResponse = async (req: Request, res: Response): Promise<void> => {
     `, [ agentId ]);
     if (getAgent.rows.length === 0) return utils.sendResponse({ res, status: 404, message: "Failed to get agent" });
 
-    const fastAPIResponse = await fastAPI.createResponse({ input });
+    const response = await fastAPI.createResponse({ input });
+    if (!response) return utils.sendResponse({ res, status: 404, message: "Failed to get response" });
+
+    const responseType = await fastAPI.inferResponseType({ input });
+    if (!responseType) return utils.sendResponse({ res, status: 404, message: "Failed to get response type" });
 
     res.status(201).json({
       message: 'Response created',
-      data: fastAPIResponse
+      data: {
+        responseBody: response,
+        responseBodyType: responseType
+      }
     });
   } catch (err) {
     console.error("Failed to create response:", err);

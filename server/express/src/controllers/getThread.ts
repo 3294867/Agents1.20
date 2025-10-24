@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { pool } from "../index";
 import utils from '../utils';
 import { ReqResFE, ReqResPG, ThreadFE } from '../types';
+import fastAPI from '../fastAPI';
 
 interface RequestBody {
   threadId: string;
@@ -58,15 +59,8 @@ const getThread = async (req: Request, res: Response): Promise<void> => {
         `, [ i.requestId ]);
         if (getRequestBody.rows.length === 0) return utils.sendResponse({ res, status: 404, message: "Failed to get request body" });
         
-        // const inferAgentType = await client.responses.create({
-        //   model: "gpt-3.5-turbo",
-        //   input: `
-        //     Choose the most appropriate agent type for the following question: ${getRequestBody.rows[0].body}.
-        //     Available agent types: 'general', 'data-analyst', 'copywriter', 'devops-helper'.
-        //     Return only agent type in lower case.
-        //   `,
-        // });
-        // if (!inferAgentType.output_text) return utils.sendResponse({ res, status: 503, message: "Failed to infer agent type" });
+        const inferAgentType = await fastAPI.inferAgentType({ input: getRequestBody.rows[0].body })
+        if (!inferAgentType) return utils.sendResponse({ res, status: 404, message: "Failed to infer agent type" });
         
         const getResponseBody = await pool.query(`
           SELECT body
@@ -80,7 +74,7 @@ const getThread = async (req: Request, res: Response): Promise<void> => {
           requestBody: getRequestBody.rows[0].body,
           responseId: i.responseId,
           responseBody: getResponseBody.rows[0].body,
-          // inferredAgentType: inferAgentType.output_text,
+          inferredAgentType: inferAgentType,
           isNew: false
         } as ReqResFE
       })

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import postgresDB from 'src/storage/postgresDB';
-import indexedDB from 'src/storage/indexedDB';
 import { Workspace } from 'src/types';
+import express from 'src/routes/express';
+import indexedDB from 'src/storage/indexedDB';
 
 interface Props {
   userId: string;
@@ -34,10 +34,10 @@ const useHandleWorkspace = ({ userId, workspaceName }: Props): { workspaces: Wor
           });
         }
 
-        const getWorkspacesData = await postgresDB.getWorkspacesUpdatedAt({ userId });
+        const getWorkspacesData = await express.getWorkspacesUpdatedAt({ userId });
 
         if (getWorkspacesIDB.length === 0 || JSON.stringify(workspacesDataIDB) !== JSON.stringify(getWorkspacesData)) {
-          const getWorkspacesPGDB = await postgresDB.getWorkspaces({ userId });
+          const getWorkspacesPGDB = await express.getWorkspaces({ userId });
           await indexedDB.addWorkspaces({ workspaces: getWorkspacesPGDB });
           setWorkspaces(getWorkspacesPGDB);
           return;

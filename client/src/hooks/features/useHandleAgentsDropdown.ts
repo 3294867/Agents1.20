@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 
 interface Props {
   workspaceId: string;
@@ -25,7 +25,7 @@ const useHandleAgentsDropdown = ({ workspaceId }: Props): Return => {
 
     const init = async () => {
       try {
-        const getAgentNamesPGDB = await postgresDB.getAgentNames({ workspaceId });
+        const getAgentNamesPGDB = await express.getAgentNames({ workspaceId });
         setAgentNames(getAgentNamesPGDB);
       } catch (error) {
         setError(`Failed to fetch agent names: ${error}`);

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import hooks from 'src/hooks';
 import utils from 'src/utils';
 import Heading from 'src/components/heading';
@@ -20,7 +20,7 @@ const AgentThumbnails = memo(() => {
   if (!availableAgents) return <Error error='Failed to fetch available agents' />
   
   const handleClick = async (i: AddAgent) => {
-    await postgresDB.addAgent({ workspaceId, agentData: i });
+    await express.addAgent({ workspaceId, agentData: i });
     navigate(`/${workspaceName}/${i.name}`);
   };
   

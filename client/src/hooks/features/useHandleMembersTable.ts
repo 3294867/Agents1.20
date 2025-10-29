@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import { WorkspaceMember } from 'src/types';
 
 interface Props {
@@ -26,7 +26,7 @@ const useHandleWorkspaceMembersData = ({ workspaceId }: Props): Return => {
 
     const init = async () => {
       try {
-        const fetchMembers = await postgresDB.getWorkspaceMembers({ workspaceId });
+        const fetchMembers = await express.getWorkspaceMembers({ workspaceId });
         if (!fetchMembers) {
           setError('Failed to fetch members (PostgresDB)');
           return;

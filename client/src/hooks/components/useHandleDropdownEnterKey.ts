@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import dispatchEvent from 'src/events/dispatchEvent';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
@@ -15,13 +15,13 @@ const useHandleDropdownEnterKey = ({ dropdownRef, isOpen, setIsOpen }: Props): v
   const navigate = useNavigate();
   
   const handleBookmarkThread = async ({ threadId, isBookmarked} : { threadId: string; isBookmarked: boolean }) => {
-    await postgresDB.updateThreadIsBookmarked({ threadId, isBookmarked });
+    await express.updateThreadIsBookmarked({ threadId, isBookmarked });
     await indexedDB.updateThreadIsBookmarked({ threadId, isBookmarked});
     dispatchEvent.threadIsBookmarkedUpdated({ threadId, isBookmarked });
   };
 
   const handleDeleteThread = async ({ workspaceName, threadId, agentName }: { workspaceName: string, threadId: string, agentName: string}) => {
-    await postgresDB.deleteThread({ threadId });
+    await express.deleteThread({ threadId });
     await indexedDB.deleteThread({ threadId });
     tabsStorage.remove({ workspaceName, agentName, tabId: threadId });
     
@@ -64,7 +64,7 @@ const useHandleDropdownEnterKey = ({ dropdownRef, isOpen, setIsOpen }: Props): v
       document.addEventListener('keydown', handleKeyDown);
     }
     return () => document.removeEventListener('keydown', handleKeyDown);
-  },[dropdownRef, isOpen]);
+  },[dropdownRef, isOpen, handleKeyDown]);
 };
 
 export default useHandleDropdownEnterKey;

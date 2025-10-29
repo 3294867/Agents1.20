@@ -1,22 +1,22 @@
 import { memo, useState } from 'react';
-import openai from 'src/openai';
-import postgresDB from 'src/storage/postgresDB';
+import { AgentModel, ReqRes } from 'src/types';
+import fastAPI from 'src/routes/fastAPI';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import hooks from 'src/hooks';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
 import AgentModelDropdown from './AgentModelDropdown';
 import Button from 'src/components/button';
 import Textarea from 'src/components/textarea';
-import { AgentModel, AgentType } from 'src/types';
 import Icons from 'src/assets/icons';
 import styles from './Form.module.css';
 
 const Form = memo(() => {
   const {
     workspaceName,
-    agentId,
     agentName,
     agentModel: initialAgentModel,
+    agentSystemInstructions,
     threadId,
     threadBodyLength
   } = hooks.features.useThreadContext();
@@ -26,14 +26,13 @@ const Form = memo(() => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    /** Create response (OpenAI) */
-    const { responseBody, responseBodyType } = await openai.createResponse({ agentId, agentModel, input });
+    const {
+      inferredAgentType,
+      inferredResponseType: responseBodyType,
+      response: responseBody
+    } = await fastAPI.createResponse({ agentModel, agentSystemInstructions, prompt: input });
 
-    /** Infer type of an agent (OpenAI) */
-    const inferredAgentType = await openai.inferAgentType({ input }) as AgentType;
-
-    /** Update thread body (PostgresDB) */
-    const { requestId, responseId } = await postgresDB.addReqRes({
+    const { requestId, responseId } = await express.addReqRes({
       threadId,
       requestBody: input,
       responseBody,
@@ -43,19 +42,16 @@ const Form = memo(() => {
     setInput('');
 
     if (threadBodyLength === 0) {
-      /** Update 'name' property of the thread (OpenAI, PostgresDB, IndexedDB) */
-      const threadName = await openai.createThreadName({
+      const threadName = await fastAPI.createThreadName({
         question: input,
         answer: responseBody
       });
-      await postgresDB.updateThreadName({ threadId, threadName });
+      await express.updateThreadName({ threadId, threadName });
       await indexedDB.updateThreadName({ threadId, threadName });
 
-      /** Update tabs (localStorage) */
       tabsStorage.updateName({ workspaceName, agentName, tabId: threadId, tabName: threadName });
     }
 
-    /** Update thread body (IndexedDB) */
     await indexedDB.addReqRes({
       threadId: threadId,
       reqres: {
@@ -66,7 +62,7 @@ const Form = memo(() => {
         responseType: responseBodyType,
         inferredAgentType,
         isNew: true
-      }
+      } as ReqRes
     });
   };
   

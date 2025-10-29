@@ -1,13 +1,13 @@
 import { memo } from 'react';
-import openai from 'src/openai';
+import { AgentType, ReqRes } from 'src/types';
+import fastAPI from 'src/routes/fastAPI';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
-import postgresDB from 'src/storage/postgresDB';
 import hooks from 'src/hooks';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
 import dispatchEvent from 'src/events/dispatchEvent';
 import Button from 'src/components/button';
 import Icons from 'src/assets/icons';
-import { AgentType } from 'src/types';
 import styles from './PauseRunButton.module.css';
 
 interface Props {
@@ -31,9 +31,9 @@ const PauseRunButton = memo(({
 }: Props) => {
   const {
     workspaceName,
-    agentId,
     agentName,
     agentModel,
+    agentSystemInstructions,
     threadId
   } = hooks.features.useThreadContext();
   
@@ -45,23 +45,24 @@ const PauseRunButton = memo(({
   const handleRun = async () => {
     setIsEditing(false);
     
-    const response = await openai.createResponse({ agentId, agentModel, input });
-    await postgresDB.updateRequestBody({ requestId, requestBody: input });
-    await postgresDB.updateResponseBody({ responseId, responseBody: response });
+    const { inferredResponseType: responseType, response } = await fastAPI.createResponse({ agentModel, agentSystemInstructions, prompt: input });
+    await express.updateRequestBody({ requestId, requestBody: input });
+    await express.updateResponseBody({ responseId, responseBody: response });
     const reqres = {
       requestId,
       requestBody: input,
       responseId,
       responseBody: response,
+      responseType,
+      inferredAgentType,
       isNew: true,
-      inferredAgentType
-    };
+    } as ReqRes;
     const reqresIndex = await indexedDB.updateReqRes({ threadId, reqres });
     dispatchEvent.reqresUpdated({ threadId, reqres });
     
     if (reqresIndex === 0) {
-      const newThreadName = await openai.createThreadName({ question: input, answer: response});
-      await postgresDB.updateThreadName({ threadId, threadName: newThreadName });
+      const newThreadName = await fastAPI.createThreadName({ question: input, answer: response});
+      await express.updateThreadName({ threadId, threadName: newThreadName });
       await indexedDB.updateThreadName({ threadId, threadName: newThreadName });
       tabsStorage.updateName({ workspaceName, agentName, tabId: threadId, tabName: newThreadName });
     }

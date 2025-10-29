@@ -13,7 +13,15 @@ interface Props {
 }
 
 const Question = memo(({ reqres }: Props) => {
-  const { requestId, requestBody, responseId, responseBody, inferredAgentType, isNew } = reqres;
+  const {
+    requestId,
+    requestBody,
+    responseId,
+    responseBody,
+    responseType,
+    inferredAgentType,
+    isNew
+  } = reqres;
   const [input, setInput] = useState(requestBody);
   const [isEditing, setIsEditing] = useState(false);
   const { progressBarLength } = hooks.features.useChatContext();
@@ -36,6 +44,7 @@ const Question = memo(({ reqres }: Props) => {
           requestBody={requestBody}
           responseId={responseId}
           responseBody={responseBody}
+          responseType={responseType}
           inferredAgentType={inferredAgentType}
         />
       </div>

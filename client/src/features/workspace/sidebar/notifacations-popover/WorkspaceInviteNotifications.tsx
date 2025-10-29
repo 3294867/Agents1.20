@@ -1,11 +1,11 @@
+import { toast } from 'sonner';
+import { Notification } from 'src/types';
+import express from 'src/routes/express';
 import Button from 'src/components/button';
 import Paragraph from 'src/components/paragraph';
-import { Notification } from 'src/types';
 import Dropdown from 'src/components/dropdown';
 import Icons from 'src/assets/icons';
 import styles from './NotificationsList.module.css';
-import postgresDB from 'src/storage/postgresDB';
-import { toast } from 'sonner';
 
 interface Props {
   notifications: Notification[];
@@ -13,7 +13,7 @@ interface Props {
 
 const WorkspaceInviteNotifications = ({ notifications }: Props) => {
   const handleAccept = async (notificationId: string) => {
-    const acceptInvite = await postgresDB.acceptWorkspaceInvite({ notificationId });
+    const acceptInvite = await express.acceptWorkspaceInvite({ notificationId });
     if (acceptInvite) {
       toast.success('Workspace has been added');
       return;
@@ -22,7 +22,7 @@ const WorkspaceInviteNotifications = ({ notifications }: Props) => {
   };
 
   const handleDecline = async (notificationId: string) => {
-    const declineInvite = await postgresDB.declineWorkspaceInvite({ notificationId });
+    const declineInvite = await express.declineWorkspaceInvite({ notificationId });
     if (declineInvite) {
       toast.success('You have declined an invite');
       return;
@@ -31,7 +31,7 @@ const WorkspaceInviteNotifications = ({ notifications }: Props) => {
   };
 
   const handleDismiss = async (notificationId: string) => {
-    const dismissInvite = await postgresDB.dismissWorkspaceInvite({ notificationId });
+    const dismissInvite = await express.dismissWorkspaceInvite({ notificationId });
     if (dismissInvite) {
       toast.success('Workspace has been added');
       return;

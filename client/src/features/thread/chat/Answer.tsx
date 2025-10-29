@@ -1,8 +1,8 @@
 import { memo } from 'react';
+import { AgentType } from 'src/types';
+import hooks from 'src/hooks';
 import AnimatedParagraph from 'src/components/AnimatedParagraph';
 import Paragraph from 'src/components/paragraph';
-import hooks from 'src/hooks';
-import { AgentType } from 'src/types';
 
 interface AnswerProps {
   requestId: string;

@@ -1,15 +1,15 @@
 import { ChangeEvent, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
+import { toast } from 'sonner';
+import express from 'src/routes/express';
+import hooks from 'src/hooks';
 import Icons from 'src/assets/icons';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import Paragraph from 'src/components/paragraph';
 import styles from './Users.module.css';
-import hooks from 'src/hooks';
-import { toast } from 'sonner';
 
 const Users = () => {
-  const { workspaceId, workspaceName, memberNames } = hooks.features.useWorkspaceMembersTableContext();
+  const { workspaceId, memberNames } = hooks.features.useWorkspaceMembersTableContext();
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [users, setUsers] = useState<string[]>([]);
 
@@ -18,7 +18,7 @@ const Users = () => {
 
     if (e.target.value !== '') {
       setTimeout(async () => {
-        const fetchUsers = await postgresDB.getUsers({ input: e.target.value })
+        const fetchUsers = await express.getUsers({ input: e.target.value })
         if (!fetchUsers) return;
         const filteredUsers = fetchUsers.filter(user => !memberNames.includes(user))
         setUsers(filteredUsers);
@@ -27,7 +27,7 @@ const Users = () => {
   };
 
   const handleInviteUser = async (userName: string) => {
-    const inviteUser = await postgresDB.inviteUser({ userName, workspaceId }); 
+    const inviteUser = await express.inviteUser({ userName, workspaceId }); 
     if (!inviteUser) {
       toast.error(`Failed to invite user. Try again later`);
       return;

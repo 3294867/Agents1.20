@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import hooks from 'src/hooks';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
@@ -20,7 +20,7 @@ const AddTab = memo(({ tabs, currentThreadId }: Props) => {
   const isAddTabDisabled = tabs.length > constants.tabMaxLength;
 
   const handleAddTab = async () => {
-    const threadData = await postgresDB.addThread({ agentId });
+    const threadData = await express.addThread({ agentId });
     const newTab: Tab = { id: threadData.id, workspaceId, agentId, name: null, isActive: true };
     tabsStorage.add({ workspaceName, agentName, newTab });
     await indexedDB.updateThreadPositionY({

@@ -2,8 +2,6 @@ import addAgent from './addAgent';
 import addPublicThread from './addPublicThread';
 import addReqRes from './addReqRes';
 import addThread from './addThread';
-import createResponse from './createResponse';
-import createThreadName from './createThreadName';
 import deleteReqRes from './deleteReqRes';
 import deleteThread from './deleteThread';
 import duplicateThread from './duplicateThread';
@@ -43,8 +41,6 @@ const controllers = {
   addPublicThread,
   addReqRes,
   addThread,
-  createResponse,
-  createThreadName,
   deleteReqRes,
   deleteThread,
   duplicateThread,

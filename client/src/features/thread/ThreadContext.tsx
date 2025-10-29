@@ -9,6 +9,7 @@ export interface ThreadContextType {
   agentName: string;
   agentType: AgentType;
   agentModel: AgentModel;
+  agentSystemInstructions: string;
   threadId: string;
   threadName: string | null;
   threadBody: ReqRes[] | [];

@@ -8,7 +8,7 @@ import { AgentModel } from 'src/types';
 interface Props {
   agentModel: AgentModel;
   setAgentModel: (model: AgentModel) => void;
-};
+}
 
 const AgentModelDropdown = memo(({ agentModel, setAgentModel }: Props) => {
   return (

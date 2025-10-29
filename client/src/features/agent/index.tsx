@@ -41,6 +41,7 @@ const Agent = () => {
     agentName,
     agentType: agent.type,
     agentModel: agent.model,
+    agentSystemInstructions: agent.systemInstructions,
     isMobile
   };
   

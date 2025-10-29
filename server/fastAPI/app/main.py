@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.api_routes import router as api_router
+from app.responses import stream_response
 
 app = FastAPI(title="FastAPI AI Service")
 
@@ -17,3 +19,4 @@ app.include_router(api_router)
 @app.get("/")
 def root():
     return {"message": "Server is running"}
+

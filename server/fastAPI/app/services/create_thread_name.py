@@ -4,8 +4,8 @@ async def create_thread_name(input: dict) -> str:
     question = input.get("question", "")
     answer = input.get("answer", "")
 
-    response = get_client().responses.create(
-        model="gpt-5-nano",
+    response = await get_client().responses.create(
+        model="gpt-4o-mini",
         input=[
             {
                 "role": "system",
@@ -13,8 +13,8 @@ async def create_thread_name(input: dict) -> str:
                     "Return a short, clear title for the conversation.\n"
                     "Rules:\n"
                     "- Output only the title.\n"
-                    "- Do not use quotes ("").\n"
-                    "- Do not include 'Title:', or extra words.\n"
+                    "- Do not use quotes.\n"
+                    "- Do not include 'Title:', or any extra words.\n"
                 )
             },
             {

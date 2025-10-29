@@ -26,7 +26,7 @@ const Chat = memo(() => {
               responseBody={i.responseBody}
               inferredAgentType={i.inferredAgentType}
               isNew={i.isNew}
-              />
+            />
           </div>
         ))}
       </div>

@@ -1,14 +1,27 @@
-const userRoles = [ 'Admin', 'Editor', 'Viewer' ];
+import { AgentModel, AgentType, UserRole } from './types';
 
-const agentTypes = [ 'general', 'data-analyst', 'copywriter', 'devops-helper' ];
+const userRoles = [
+  'admin',
+  'editor',
+  'viewer'
+] as UserRole[];
+
+const agentTypes = [
+  'general',
+  'data-analyst',
+  'copywriter',
+  'devops-helper'
+] as AgentType[];
 
 const agentModels = [
   'gpt-4.1',
-  'chatgpt-4o',
+  'gpt-4o',
+  'gpt-4o-mini',
   'gpt-5',
   'gpt-5-mini',
-  'gpt-5-nano','gpt-5-pro'
-];
+  'gpt-5-nano',
+  'gpt-5-pro'
+] as AgentModel[];
 
 const technologies = [
   'ActiveMQ',

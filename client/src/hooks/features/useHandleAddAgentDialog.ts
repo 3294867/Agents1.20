@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
 import { AddAgent } from 'src/types';
+import express from 'src/routes/express';
 
 interface Props {
   workspaceId: string;
@@ -21,7 +21,7 @@ const useHandleAddAgentDialog = ({ workspaceId }: Props): { availableAgents: Add
     
     const getAvailableAgents = async () => {
       try {
-        const getAvailableAgents = await postgresDB.getAvailableAgents({ workspaceId });
+        const getAvailableAgents = await express.getAvailableAgents({ workspaceId });
         setAvailableAgents(getAvailableAgents);
       } catch (error) {
         throw new Error(`Failed to fetch available agents: ${error}`);

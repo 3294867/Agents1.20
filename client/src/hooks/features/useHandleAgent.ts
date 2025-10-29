@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Agent, Tab } from 'src/types';
 import indexedDB from 'src/storage/indexedDB';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
-import postgresDB from 'src/storage/postgresDB';
-import { Agent, Tab } from 'src/types';
+import express from 'src/routes/express';
 
 interface Props {
   workspaceName: string | undefined;
@@ -28,12 +28,12 @@ const useHandleAgent = ({ workspaceName, agentName }: Props): { agent: Agent | n
         const workspaceIdIDB = await indexedDB.getWorkspaceId({ workspaceName });
         const getAgentIDB = await indexedDB.getAgent({ workspaceId: workspaceIdIDB, agentName });
         if (!getAgentIDB) {
-          const getAgentPGDB = await postgresDB.getAgent({ workspaceId: workspaceIdIDB, agentName });
+          const getAgentPGDB = await express.getAgent({ workspaceId: workspaceIdIDB, agentName });
           await indexedDB.addAgent({ agent: getAgentPGDB });
           
           const loadSavedTabs = tabsStorage.load({ workspaceName, agentName });
           if (!loadSavedTabs || loadSavedTabs.length === 0) {
-            const { id, createdAt, updatedAt } = await postgresDB.addThread({ agentId: getAgentPGDB.id });
+            const { id, createdAt, updatedAt } = await express.addThread({ agentId: getAgentPGDB.id });
             await indexedDB.addNewThread({ id, agentId: getAgentPGDB.id, createdAt, updatedAt});
             const newTab: Tab = { id, workspaceId: workspaceIdIDB, agentId: getAgentPGDB.id, name: null, isActive: true };
             tabsStorage.add({ workspaceName, agentName, newTab });
@@ -49,7 +49,7 @@ const useHandleAgent = ({ workspaceName, agentName }: Props): { agent: Agent | n
 
         const loadSavedTabs = tabsStorage.load({ workspaceName, agentName });
         if (!loadSavedTabs || loadSavedTabs.length === 0) {
-          const { id, createdAt, updatedAt } = await postgresDB.addThread({ agentId: getAgentIDB.id });
+          const { id, createdAt, updatedAt } = await express.addThread({ agentId: getAgentIDB.id });
           await indexedDB.addNewThread({ id, agentId: getAgentIDB.id, createdAt, updatedAt});
           const newTab: Tab = { id, workspaceId: workspaceIdIDB, agentId: getAgentIDB.id, name: null, isActive: true };
           tabsStorage.add({ workspaceName, agentName, newTab });

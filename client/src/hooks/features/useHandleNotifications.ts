@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import { Notification } from 'src/types';
 
 interface Props {
@@ -26,7 +26,7 @@ const useHandleNotifications = ({ userId }: Props): Return => {
 
     try {
       const init = async () => {
-        const getNotifications = await postgresDB.getNotifications({ userId });
+        const getNotifications = await express.getNotifications({ userId });
         if (getNotifications) setNotifications(getNotifications);
       };
       init();

@@ -17,7 +17,7 @@ interface Workspace {
 }
 
 type AgentType = 'general' | 'data-analyst' | 'copywriter' | 'devops-helper'
-type AgentModel = 'gpt-4.1' | 'chatgpt-4o' | 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano' | 'gpt-5-pro'
+type AgentModel = 'gpt-4.1' | 'gpt-4o' | 'gpt-4o-mini' | 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano' | 'gpt-5-pro'
 
 interface Agent {
   id: string;
@@ -43,12 +43,14 @@ interface AddAgent {
   webSearch: boolean
 }
 
+type ResponseType = 'paragraph' | 'bullet-list' | 'table'
+
 type ReqRes = {
   requestId: string;
   requestBody: string;
   responseId: string;
   responseBody: string;
-  responseType: string;
+  responseType: ResponseType;
   inferredAgentType: AgentType;
   isNew: boolean;
 }
@@ -93,6 +95,7 @@ export type {
   AgentModel,
   Agent,
   AddAgent,
+  ResponseType,
   ReqRes,
   Thread,
   Tab,

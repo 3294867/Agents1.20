@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import hooks from 'src/hooks';
 import dispatchEvent from 'src/events/dispatchEvent';
@@ -21,11 +21,11 @@ const DeleteButton = memo(({ requestId, responseId }: Props) => {
   } = hooks.features.useThreadContext();
   
   const handleClick = async () => {
-    await postgresDB.deleteReqRes({ threadId, requestId, responseId });
+    await express.deleteReqRes({ threadId, requestId, responseId });
     await indexedDB.deleteReqRes({ threadId, requestId });
 
     if (threadBodyLength == 1) {
-      await postgresDB.removeThreadName({ threadId });
+      await express.removeThreadName({ threadId });
       await indexedDB.removeThreadName({ threadId });
       tabsStorage.updateName({ workspaceName, agentName, tabId: threadId, tabName: null});
       dispatchEvent.threadNameUpdated({ threadName: null });

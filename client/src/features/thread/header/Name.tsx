@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
-import postgresDB from 'src/storage/postgresDB';
 import dispatchEvent from 'src/events/dispatchEvent';
 import Heading from 'src/components/heading';
 import Button from 'src/components/button';
@@ -32,7 +32,7 @@ export default Name;
 const BookmarkButton = memo(() => {
   const { threadId, threadIsBookmarked } = hooks.features.useThreadContext();
   const handleClick = async () => {
-    await postgresDB.updateThreadIsBookmarked({ threadId, isBookmarked: threadIsBookmarked });
+    await express.updateThreadIsBookmarked({ threadId, isBookmarked: threadIsBookmarked });
     await indexedDB.updateThreadIsBookmarked({ threadId, isBookmarked: threadIsBookmarked });
     dispatchEvent.threadIsBookmarkedUpdated({ threadId, isBookmarked: threadIsBookmarked });
   };

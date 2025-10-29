@@ -1,13 +1,13 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AddAgent, ReqRes } from 'src/types';
+import express from 'src/routes/express';
+import fastAPI from 'src/routes/fastAPI';
 import indexedDB from 'src/storage/indexedDB';
-import postgresDB from 'src/storage/postgresDB';
-import openai from 'src/openai';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
 import hooks from 'src/hooks';
 import utils from 'src/utils';
 import Button from 'src/components/button';
-import { AddAgent, ReqRes } from 'src/types';
 
 interface Props {
   reqres: ReqRes;
@@ -28,21 +28,21 @@ const ChangeAgentButton = memo(({ reqres, isEditing }: Props) => {
   const handleClick = async () => {
     /** Remove reqres from the 'body' property of the current thread (IndexedDB, PostgresDB) */
     await indexedDB.deleteReqRes({ threadId, requestId: reqres.requestId });
-    await postgresDB.deleteReqRes({ threadId, requestId: reqres.requestId, responseId: reqres.responseId });
+    await express.deleteReqRes({ threadId, requestId: reqres.requestId, responseId: reqres.responseId });
     
     /** Create and update 'name' property of the thread (OpenAI, IndexedDB, PostgresDB, localStorage) */
     const firstReqRes = await indexedDB.getFirstReqRes({ threadId });
     if (firstReqRes) {
-      const threadName = await openai.createThreadName({
+      const threadName = await fastAPI.createThreadName({
         question: firstReqRes.requestBody,
         answer: firstReqRes.responseBody
       });
 
-      await postgresDB.updateThreadName({ threadId, threadName });
+      await express.updateThreadName({ threadId, threadName });
       await indexedDB.updateThreadName({ threadId, threadName });
       tabsStorage.updateName({ workspaceName, agentName: currentAgentName, tabId: threadId, tabName: threadName });
     } else {
-      await postgresDB.updateThreadName({ threadId, threadName: null });
+      await express.updateThreadName({ threadId, threadName: null });
       await indexedDB.updateThreadName({ threadId, threadName: null });
       tabsStorage.updateName({ workspaceName, agentName: currentAgentName, tabId: threadId, tabName: null });
     }
@@ -56,37 +56,41 @@ const ChangeAgentButton = memo(({ reqres, isEditing }: Props) => {
     if (savedAgent) {
       newAgentData = { id: savedAgent.id, name: savedAgent.name };
     } else {
-      const availableAgentPostgres: AddAgent = await postgresDB.getAvailableAgentByType({ agentType: reqres.inferredAgentType })
-      const { id: newAgentId, name: newAgentName } = await postgresDB.addAgent({ workspaceId, agentData: availableAgentPostgres });
+      const availableAgentPostgres: AddAgent = await express.getAvailableAgentByType({ agentType: reqres.inferredAgentType })
+      const { id: newAgentId, name: newAgentName } = await express.addAgent({ workspaceId, agentData: availableAgentPostgres });
       newAgentData = { id: newAgentId, name: newAgentName };
     }
     
     /** Create new thread (PostgresDB) */
-    const newThread = await postgresDB.addThread({ agentId: newAgentData.id });
+    const newThread = await express.addThread({ agentId: newAgentData.id });
 
     /** Add new thread (IndexedDB) */
     await indexedDB.addNewThread({ ...newThread, agentId: newAgentData.id });
 
     /** Add reqres to the 'body' property of the new thread (IndexedDB, PostgresDB) */
-    const { requestId: newRequestId, responseId: newResponseId } = await postgresDB.addReqRes({
-      threadId: newThread.id, requestBody: reqres.requestBody, responseBody: reqres.responseBody
+    const { requestId: newRequestId, responseId: newResponseId } = await express.addReqRes({
+      threadId: newThread.id,
+      requestBody: reqres.requestBody,
+      responseBody: reqres.responseBody,
+      responseType: reqres.responseType
     });
     const newReqRes ={
       requestId: newRequestId,
       requestBody: reqres.requestBody,
       responseId: newResponseId,
       responseBody: reqres.responseBody,
+      responseType: reqres.responseType,
       inferredAgentType: reqres.inferredAgentType,
       isNew: true,
     }
     await indexedDB.addReqRes({ threadId: newThread.id, reqres: newReqRes });
 
     /** Create and update 'name' property of the new thread (OpenAI, PostgresDB, IndexedDB) */
-    const newThreadName = await openai.createThreadName({
+    const newThreadName = await fastAPI.createThreadName({
       question: reqres.requestBody,
       answer: reqres.responseBody
     });
-    await postgresDB.updateThreadName({
+    await express.updateThreadName({
       threadId: newThread.id,
       threadName: newThreadName
     });

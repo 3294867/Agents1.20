@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import indexedDB from 'src/storage/indexedDB';
-import postgresDB from 'src/storage/postgresDB';
 import { AgentType } from 'src/types';
+import express from 'src/routes/express';
+import indexedDB from 'src/storage/indexedDB';
 
 interface Props {
   threadId: string;
@@ -56,7 +56,7 @@ const useHandleAnimatedParagraph = ({ threadId, requestId, responseId, responseB
         const update = async () => {
           setIsPaused(true);
           setProgressBarLength(0);
-          await postgresDB.updateResponseBody({
+          await express.updateResponseBody({
             responseId: event.detail.responseId,
             responseBody: copy
           });

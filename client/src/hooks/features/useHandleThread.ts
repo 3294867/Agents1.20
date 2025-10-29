@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import postgresDB from 'src/storage/postgresDB';
-import indexedDB from 'src/storage/indexedDB';
 import { ReqRes, Thread } from 'src/types';
+import express from 'src/routes/express';
+import indexedDB from 'src/storage/indexedDB';
 
 interface Props {
   workspaceId: string;
@@ -34,10 +34,10 @@ const useHandleThread = ({ workspaceId, workspaceName, agentId, agentName, threa
     const init = async () => {
       try {
         const getThreadIDB = await indexedDB.getThread({ threadId });
-        const getThreadPGDBUpdatedAt = await postgresDB.getThreadUpdatedAt({ threadId });
+        const getThreadPGDBUpdatedAt = await express.getThreadUpdatedAt({ threadId });
   
         if (!getThreadIDB || new Date(getThreadIDB.updatedAt).getTime() !== new Date(getThreadPGDBUpdatedAt).getTime()) {
-          const getThreadPGDB = await postgresDB.getThread({ threadId });
+          const getThreadPGDB = await express.getThread({ threadId });
           await indexedDB.addThread({ thread: getThreadPGDB });
           setThread(getThreadPGDB);
           return;

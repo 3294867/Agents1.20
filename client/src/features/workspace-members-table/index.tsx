@@ -11,7 +11,6 @@ import {
   useReactTable,
   flexRender
 } from '@tanstack/react-table';
-import postgresDB from 'src/storage/postgresDB';
 import utils from 'src/utils';
 import Table from 'src/components/table';
 import InviteMember from './inviteMember';
@@ -20,6 +19,7 @@ import Dropdown from 'src/components/dropdown';
 import Icons from 'src/assets/icons';
 import constants from 'src/constants';
 import WorkspaceMembersTableContext from './WorkspaceMembersTableContext';
+import express from 'src/routes/express';
 
 interface Props<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -58,7 +58,7 @@ const WorkspaceMembersTable = <TData, TValue>({ columns, data, workspaceId, work
   });
 
   const handleUpdateMemberRole = async ({ userId, role }: { userId: string, role: string }) => {
-    await postgresDB.updateMemberRole({ workspaceId, userId, role });
+    await express.updateMemberRole({ workspaceId, userId, role });
     setCloseDropdown(true);
     setTimeout(() => setCloseDropdown(false), 100);
   };

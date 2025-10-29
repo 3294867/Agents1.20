@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import hooks from 'src/hooks';
 import tabsStorage from 'src/storage/localStorage/tabsStorage';
@@ -16,7 +16,7 @@ const DeleteThreadDialog = memo(() => {
   const { workspaceName, agentName, threadId } = hooks.features.useThreadContext();
 
   const handleClick = async () => {
-    await postgresDB.deleteThread({ threadId });
+    await express.deleteThread({ threadId });
     await indexedDB.deleteThread({ threadId });
     tabsStorage.remove({ workspaceName, agentName, tabId: threadId });
     navigate(`/${workspaceName}/${agentName}`);

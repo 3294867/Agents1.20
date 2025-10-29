@@ -1,6 +1,6 @@
 import { memo, useState } from 'react';
 import { toast } from 'sonner';
-import postgresDB from 'src/storage/postgresDB';
+import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
 import hooks from 'src/hooks';
 import Icons from 'src/assets/icons';
@@ -16,14 +16,14 @@ const ShareThreadButton = memo(() => {
   const handleMouseEnter = async () => {
     if (isLinkCreated) return;
     try {
-      const { agentType: publicThreadAgentType, threadId: publicThreadId } = await postgresDB.addPublicThread({ threadId });
+      const { agentType: publicThreadAgentType, threadId: publicThreadId } = await express.addPublicThread({ threadId });
       setSharedThreadId(publicThreadId);
       const agentIDB = await indexedDB.getAgentByType({ agentType: publicThreadAgentType });
       if (!agentIDB) {
-        const agentPostgres = await postgresDB.getAgentByType({ agentType: publicThreadAgentType});
+        const agentPostgres = await express.getAgentByType({ agentType: publicThreadAgentType});
         if (!agentPostgres) {
-          const getAvailableAgentByType = await postgresDB.getAvailableAgentByType({ agentType: publicThreadAgentType });
-          const addAgent = await postgresDB.addAgent({ workspaceId, agentData: getAvailableAgentByType });
+          const getAvailableAgentByType = await express.getAvailableAgentByType({ agentType: publicThreadAgentType });
+          const addAgent = await express.addAgent({ workspaceId, agentData: getAvailableAgentByType });
           setAgentName(addAgent.name);
           return;
         }

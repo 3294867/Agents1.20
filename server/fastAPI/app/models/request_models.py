@@ -11,3 +11,7 @@ class CreateResponse(BaseModel):
 class CreateThreadName(BaseModel):
     question: str
     answer: str
+
+class CreateStream(BaseModel):
+    agentModel: str
+    prompt: str

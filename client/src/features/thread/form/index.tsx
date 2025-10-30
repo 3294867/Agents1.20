@@ -18,7 +18,8 @@ const Form = memo(() => {
     agentModel: initialAgentModel,
     agentSystemInstructions,
     threadId,
-    threadBodyLength
+    threadBodyLength,
+    setStream    
   } = hooks.features.useThreadContext();
   const [input, setInput] = useState<string>('');
   const [agentModel, setAgentModel] = useState<AgentModel>(initialAgentModel);
@@ -31,6 +32,13 @@ const Form = memo(() => {
       inferredResponseType: responseBodyType,
       response: responseBody
     } = await fastAPI.createResponse({ agentModel, agentSystemInstructions, prompt: input });
+
+    await fastAPI.createStream({
+      agentModel,
+      prompt: input,
+      onToken: (chunk) => setStream(prev => prev + chunk),
+      onError: (err) => setStream(prev => prev + "\n❌ " + err),
+    });
 
     const { requestId, responseId } = await express.addReqRes({
       threadId,

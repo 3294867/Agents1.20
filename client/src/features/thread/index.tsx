@@ -1,4 +1,6 @@
 import { useOutletContext, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { AgentModel, AgentType } from 'src/types';
 import hooks from 'src/hooks';
 import Error from 'src/components/error';
 import ThreadContext from './ThreadContext';
@@ -7,7 +9,6 @@ import Chat from './chat';
 import SideNav from './SideNav';
 import Form from './form';
 import Icons from 'src/assets/icons';
-import { AgentModel, AgentType } from 'src/types';
 import styles from './Thread.module.css'
 
 interface OutletContext {
@@ -42,6 +43,7 @@ const Thread = () => {
     agentName,
     threadId
   });
+  const [stream, setStream] = useState<string>("");
 
   if (isLoading) return <Loading />;
   if (error || !workspaceName || !agentName || !threadId || !thread) {
@@ -65,6 +67,8 @@ const Thread = () => {
     threadIsShared: thread.isShared,
     threadIsActive: thread.isActive,
     threadPositionY: thread.positionY,
+    stream,
+    setStream,
     isMobile
   };
 

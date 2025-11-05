@@ -1,4 +1,5 @@
-import { memo, useState } from 'react';
+import { useState } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 import { AgentModel, ReqRes } from 'src/types';
 import fastAPI from 'src/routes/fastAPI';
 import express from 'src/routes/express';
@@ -11,7 +12,7 @@ import Textarea from 'src/components/textarea';
 import Icons from 'src/assets/icons';
 import styles from './Form.module.css';
 
-const Form = memo(() => {
+const Form = () => {
   const {
     workspaceName,
     agentName,
@@ -19,7 +20,6 @@ const Form = memo(() => {
     agentSystemInstructions,
     threadId,
     threadBodyLength,
-    setStream    
   } = hooks.features.useThreadContext();
   const [input, setInput] = useState<string>('');
   const [agentModel, setAgentModel] = useState<AgentModel>(initialAgentModel);
@@ -27,32 +27,75 @@ const Form = memo(() => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    const newRequestId = uuidV4();
+    const newResponseId = uuidV4();
+    
     const {
       inferredAgentType,
-      inferredResponseType: responseBodyType,
-      response: responseBody
-    } = await fastAPI.createResponse({ agentModel, agentSystemInstructions, prompt: input });
+      inferredResponseType: responseBodyType
+    } = await fastAPI.inferAgentAndResponseTypes({ prompt: input });
 
     await fastAPI.createStream({
       agentModel,
+      agentSystemInstructions,
       prompt: input,
-      onToken: (chunk) => setStream(prev => prev + chunk),
-      onError: (err) => setStream(prev => prev + "\n❌ " + err),
+      onStart: async () => {
+        await indexedDB.addReqRes({
+          threadId: threadId,
+          reqres: {
+            requestId: newRequestId,
+            requestBody: input,
+            responseId: newResponseId,
+            responseBody: "",
+            responseType: responseBodyType,
+            inferredAgentType,
+          } as ReqRes
+        });
+      },
+      onToken: async (accumulatedResponse) => {
+        await indexedDB.updateReqRes({
+          threadId: threadId,
+          reqres: {
+            requestId: newRequestId,
+            requestBody: input,
+            responseId: newResponseId,
+            responseBody: accumulatedResponse,
+            responseType: responseBodyType,
+            inferredAgentType,
+          } as ReqRes
+        });
+      },
+      onDone: async (accumulatedResponse) => {
+        await express.addReqRes({
+          threadId,
+          requestId: newRequestId,
+          requestBody: input,
+          responseId: newResponseId,
+          responseBody: accumulatedResponse,
+          responseType: responseBodyType
+        }); 
+      },
+      onError: async (accumulatedResponse) => {
+        await indexedDB.updateReqRes({
+          threadId: threadId,
+          reqres: {
+            requestId: newRequestId,
+            requestBody: input,
+            responseId: newResponseId,
+            responseBody: accumulatedResponse,
+            responseType: responseBodyType,
+            inferredAgentType,
+          } as ReqRes
+        });
+      },
     });
 
-    const { requestId, responseId } = await express.addReqRes({
-      threadId,
-      requestBody: input,
-      responseBody,
-      responseType: responseBodyType
-    });
-    
     setInput('');
 
     if (threadBodyLength === 0) {
       const threadName = await fastAPI.createThreadName({
         question: input,
-        answer: responseBody
+        answer: ""
       });
       await express.updateThreadName({ threadId, threadName });
       await indexedDB.updateThreadName({ threadId, threadName });
@@ -60,18 +103,6 @@ const Form = memo(() => {
       tabsStorage.updateName({ workspaceName, agentName, tabId: threadId, tabName: threadName });
     }
 
-    await indexedDB.addReqRes({
-      threadId: threadId,
-      reqres: {
-        requestId: requestId,
-        requestBody: input,
-        responseId: responseId,
-        responseBody,
-        responseType: responseBodyType,
-        inferredAgentType,
-        isNew: true
-      } as ReqRes
-    });
   };
   
   return (
@@ -98,6 +129,6 @@ const Form = memo(() => {
       </div>
     </form>
   );
-});
+};
 
 export default Form;

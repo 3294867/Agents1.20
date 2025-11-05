@@ -7,7 +7,6 @@ interface Props {
   reqres: ReqRes;
 }
 
-/** Adds new reqres to the body of the thread (IndexedDB) */
 const addReqRes = async ({ threadId, reqres }: Props): Promise<void> => {
   try {
     const savedThread = await db.threads.get(threadId);

@@ -52,7 +52,6 @@ type ReqRes = {
   responseBody: string;
   responseType: ResponseType;
   inferredAgentType: AgentType;
-  isNew: boolean;
 }
 
 interface Thread {

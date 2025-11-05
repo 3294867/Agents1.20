@@ -1,5 +1,4 @@
 import { useOutletContext, useParams } from 'react-router-dom';
-import { useState } from 'react';
 import { AgentModel, AgentType } from 'src/types';
 import hooks from 'src/hooks';
 import Error from 'src/components/error';
@@ -43,7 +42,6 @@ const Thread = () => {
     agentName,
     threadId
   });
-  const [stream, setStream] = useState<string>("");
 
   if (isLoading) return <Loading />;
   if (error || !workspaceName || !agentName || !threadId || !thread) {
@@ -67,8 +65,6 @@ const Thread = () => {
     threadIsShared: thread.isShared,
     threadIsActive: thread.isActive,
     threadPositionY: thread.positionY,
-    stream,
-    setStream,
     isMobile
   };
 

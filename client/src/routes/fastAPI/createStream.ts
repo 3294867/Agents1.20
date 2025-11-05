@@ -2,38 +2,44 @@ import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 interface Props {
   agentModel: string;
+  agentSystemInstructions: string;
   prompt: string;
+  onStart?: () => void;
   onToken?: (token: string) => void;
-  onDone?: () => void;
+  onDone?: (accumulatedResponse: string) => void;
   onError?: (error: string) => void;
 }
 
 const createStream = async ({
   agentModel,
+  agentSystemInstructions,
   prompt,
+  onStart,
   onToken,
   onDone,
   onError,
 }: Props) => {
+  let accumulatedResponse = "";
+  
   await fetchEventSource(`${import.meta.env.VITE_FASTAPI_URL}/api/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ agentModel, prompt }),
+    body: JSON.stringify({ agentModel, agentSystemInstructions, prompt }),
 
     onmessage(ev) {
-      if (ev.data === "[DONE]") {
-        onDone?.();
-        return;
-      }
-      if (ev.data.startsWith("[ERROR]")) {
+      if (ev.data === "[START]") onStart?.()
+      else if (ev.data === "[DONE]") onDone?.(accumulatedResponse)
+      else if (ev.data.startsWith("[ERROR]")) {
         onError?.(ev.data);
       } else {
-        onToken?.(ev.data);
+        accumulatedResponse += ev.data;
+        onToken?.(accumulatedResponse);
       }
     },
 
-    onerror(err) {
-      onError?.(err.message);
+    onerror(e) {
+      accumulatedResponse += e
+      onError?.(accumulatedResponse);
     },
   });
 };

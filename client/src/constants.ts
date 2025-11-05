@@ -1,4 +1,4 @@
-import { AgentModel, AgentType, UserRole } from './types';
+import { AgentModel, AgentType, ResponseType, UserRole } from './types';
 
 const userRoles = [
   'admin',
@@ -22,6 +22,12 @@ const agentModels = [
   'gpt-5-nano',
   'gpt-5-pro'
 ] as AgentModel[];
+
+const responseTypes = [
+  'paragraph',
+  'bullet-list',
+  'table'
+] as ResponseType[];
 
 const technologies = [
   'ActiveMQ',
@@ -135,6 +141,7 @@ const constants = {
   userRoles,
   agentTypes,
   agentModels,
+  responseTypes,
   technologies,
   tabMaxLength,
   reqresMinNumber,

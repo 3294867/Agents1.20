@@ -1,3 +1,4 @@
+import dispatchEvent from 'src/events/dispatchEvent';
 import { db } from './initialize';
 import { ReqRes } from 'src/types';
 
@@ -21,6 +22,8 @@ const updateReqRes = async ({ threadId, reqres }: Props): Promise<number | null>
       body: [...updatedBody]
     });
     if (updatedThread === 0) throw new Error('Failed to update thread');
+
+    dispatchEvent.reqresUpdated({ threadId, reqres });
 
     return reqresIndex;
   } catch (error) {

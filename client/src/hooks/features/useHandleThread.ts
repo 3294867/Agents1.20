@@ -74,8 +74,6 @@ const useHandleThread = ({ workspaceId, workspaceName, agentId, agentName, threa
             body: [...prevBody, event.detail.reqres]
           };
         });
-  
-        setNewRequestId(event.detail.reqres.requestId);
       }
     };
     window.addEventListener('reqresAdded', handleReqResAdded as EventListener);
@@ -83,6 +81,28 @@ const useHandleThread = ({ workspaceId, workspaceName, agentId, agentName, threa
     return () => window.removeEventListener('reqresAdded', handleReqResAdded as EventListener);
   },[threadId]);
 
+  /** Update thread on reqresUpdated event (UI) */
+  useEffect(() => {
+    const handleReqResUpdated = (event: CustomEvent) => {
+      if (threadId && event.detail.threadId === threadId ) {
+        setThread(prevThread => {
+          if (!prevThread) return null;
+          const prevBody = Array.isArray(prevThread.body) ? prevThread.body : [];
+          const reqresIndex = prevBody.findIndex(i => i.requestId === event.detail.reqres.requestId);
+          const updatedBody: ReqRes[] = prevBody.map((item, idx) =>
+            idx === reqresIndex ? event.detail.reqres : item
+          );
+          return {
+            ...prevThread,
+            body: [...updatedBody]
+          };
+        });
+      }
+    };
+    window.addEventListener('reqresUpdated', handleReqResUpdated as EventListener);
+    
+    return () => window.removeEventListener('reqresUpdated', handleReqResUpdated as EventListener);
+  },[threadId]);
   /** Update thread on reqresDeleted event (UI) */
   useEffect(() => {
     const handleReqResDeleted = (event: CustomEvent) => {
@@ -103,30 +123,6 @@ const useHandleThread = ({ workspaceId, workspaceName, agentId, agentName, threa
     return () => window.removeEventListener('reqresDeleted', handleReqResDeleted as EventListener);
   },[threadId]);
 
-  /** Update thread on reqresUpdated event (UI) */
-  useEffect(() => {
-    const handleReqResUpdated = (event: CustomEvent) => {
-      if (threadId && event.detail.threadId === threadId ) {
-        setThread(prevThread => {
-          if (!prevThread) return null;
-          const prevBody = Array.isArray(prevThread.body) ? prevThread.body : [];
-          const reqresIndex = prevBody.findIndex(i => i.requestId === event.detail.reqres.requestId);
-          const updatedBody: ReqRes[] = prevBody.map((item, idx) =>
-            idx === reqresIndex ? event.detail.reqres : item
-          );
-          return {
-            ...prevThread,
-            body: [...updatedBody]
-          };
-        });
-
-        setNewRequestId(event.detail.reqres.requestId);
-      }
-    };
-    window.addEventListener('reqresUpdated', handleReqResUpdated as EventListener);
-    
-    return () => window.removeEventListener('reqresUpdated', handleReqResUpdated as EventListener);
-  },[threadId]);
   
 
   /** Scroll to the new reqres (UI) */

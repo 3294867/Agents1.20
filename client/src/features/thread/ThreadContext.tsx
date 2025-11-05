@@ -18,8 +18,6 @@ export interface ThreadContextType {
   threadIsShared: boolean;
   threadIsActive: boolean;
   threadPositionY: number;
-  stream: string;
-  setStream: React.Dispatch<React.SetStateAction<string>>
   isMobile: boolean;
 }
 

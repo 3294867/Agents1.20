@@ -3,7 +3,6 @@ import hooks from 'src/hooks';
 import Answer from './Answer';
 import Question from './question';
 import ChatContext from './ChatContext';
-import StreamedResponse from './StreamedResponse';
 import styles from './Chat.module.css';
 
 const Chat = memo(() => {
@@ -26,11 +25,9 @@ const Chat = memo(() => {
               responseId={i.responseId}
               responseBody={i.responseBody}
               inferredAgentType={i.inferredAgentType}
-              isNew={i.isNew}
             />
           </div>
         ))}
-        <StreamedResponse />
       </div>
     </ChatContext.Provider>
   );

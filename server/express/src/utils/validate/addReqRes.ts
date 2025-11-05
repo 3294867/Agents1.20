@@ -5,11 +5,12 @@ interface Props {
   threadId: string;
   requestBody: string;
   responseBody: string;
+  responseType: string;
 }
 
-const addReqRes = async ({ threadId, requestBody, responseBody }: Props): Promise<string | null> => {
-  if (!threadId || !requestBody || !responseBody) {
-    return "Missing required fields: threadId, requestBody, responseBody";
+const addReqRes = async ({ threadId, requestBody, responseBody, responseType }: Props): Promise<string | null> => {
+  if (!threadId || !requestBody || !responseBody || !responseType) {
+    return "Missing required fields: threadId, requestBody, responseBody, responseType";
   }
 
   if (!utils.regex.isUuidV4(threadId)) {

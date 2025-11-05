@@ -64,6 +64,8 @@ interface AddAgent {
   webSearch: boolean
 }
 
+type ResponseType = 'paragraph' | 'bullet-list' | 'table';
+
 type ReqResPG = {
   request_id: string;
   response_id: string;
@@ -121,6 +123,7 @@ export type {
   AgentPG,
   AgentFE,
   AddAgent,
+  ResponseType,
   ReqResPG,
   ThreadPG,
   ReqResFE,

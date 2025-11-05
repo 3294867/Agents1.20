@@ -8,6 +8,7 @@ app = FastAPI(title="FastAPI AI Service")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # restrict in prod
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

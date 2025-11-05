@@ -1,4 +1,4 @@
-import { AgentModel, AgentType } from '../types';
+import { AgentModel, AgentType, ResponseType } from '../types';
 
 const agentModels = [
   'gpt-4.1',
@@ -17,7 +17,11 @@ const agentTypes = [
   'devops-helper'
 ] as AgentType[];
 
-const responseTypes = [ 'paragraph', 'bullet-list', 'table' ];
+const responseTypes = [
+  'paragraph',
+  'bullet-list',
+  'table'
+] as ResponseType[];
 
 const data = {
   agentModels,

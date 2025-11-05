@@ -5,15 +5,17 @@ import { ReqResPG } from '../types';
 
 interface RequestBody {
   threadId: string;
+  requestId: string;
   requestBody: string;
+  responseId: string;
   responseBody: string;
   responseType: string;
 }
 
 const addReqRes = async (req: Request, res: Response): Promise<void> => {
-  const { threadId, requestBody, responseBody, responseType }: RequestBody = req.body;
+  const { threadId, requestId, requestBody, responseId, responseBody, responseType }: RequestBody = req.body;
 
-  const validationError = await utils.validate.addReqRes({ threadId, requestBody, responseBody });
+  const validationError = await utils.validate.addReqRes({ threadId, requestBody, responseBody, responseType });
   if (validationError) return utils.sendResponse({ res, status: 400, message: validationError });
 
   try {
@@ -21,10 +23,10 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
     /** Request */
     const addRequest = await pool.query(`
-      INSERT INTO requests (body)
-      VALUES ($1::text)
+      INSERT INTO requests (id, body)
+      VALUES ($1::uuid, $2::text)
       RETURNING id;
-    `, [ requestBody ]);
+    `, [ requestId, requestBody ]);
     if (addRequest.rows.length === 0) {
       await pool.query(`ROLLBACK`);
       return utils.sendResponse({ res, status: 503, message: "Failed to add request" });
@@ -42,10 +44,10 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
     /** Response */
     const addResponse = await pool.query(`
-      INSERT INTO responses (body, type)
-      VALUES ($1::text, $2::text)
+      INSERT INTO responses (id, body, type)
+      VALUES ($1::uuid, $2::text, $3::text)
       RETURNING id;
-    `, [ responseBody, responseType ]);
+    `, [ responseId, responseBody, responseType ]);
     if (addResponse.rows.length === 0) {
       await pool.query(`ROLLBACK`);
       return utils.sendResponse({ res, status: 503, message: "Failed to add response" });
@@ -91,11 +93,7 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
     await pool.query(`COMMIT`);
 
     res.status(201).json({
-      message: "Reqres added",
-      data: {
-        requestId: addRequest.rows[0].id,
-        responseId: addResponse.rows[0].id
-      }
+      message: "Success",
     });
   } catch (error) {
     try {

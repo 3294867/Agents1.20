@@ -3,6 +3,9 @@ from pydantic import BaseModel
 class CreateResponseRequest(BaseModel):
     input: str
 
+class InferAgentAndResponseTypes(BaseModel):
+    prompt: str
+
 class CreateResponse(BaseModel):
     agentModel: str
     agentSystemInstructions: str
@@ -14,4 +17,5 @@ class CreateThreadName(BaseModel):
 
 class CreateStream(BaseModel):
     agentModel: str
+    agentSystemInstructions: str
     prompt: str

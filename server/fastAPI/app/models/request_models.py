@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 
+class Request(BaseModel):
+    prompt: str
+
 class CreateResponseRequest(BaseModel):
     input: str
 
@@ -18,4 +21,8 @@ class CreateThreadName(BaseModel):
 class CreateStream(BaseModel):
     agentModel: str
     agentSystemInstructions: str
+    responseType: str
+    prompt: str
+
+class CreateTable(BaseModel):
     prompt: str

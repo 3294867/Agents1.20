@@ -21,7 +21,7 @@ async def create_thread_name(input: dict) -> str:
                 "role": "user",
                 "content": (
                     f"Question: {question}\n"
-                    f"Answer: {answer}"
+                    f"Answer: {answer}\n"
                 )
             }
         ]

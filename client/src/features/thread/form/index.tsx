@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
-import { AgentModel, ReqRes } from 'src/types';
+import { AgentModel } from 'src/types';
 import fastAPI from 'src/routes/fastAPI';
 import express from 'src/routes/express';
 import indexedDB from 'src/storage/indexedDB';
@@ -36,60 +36,17 @@ const Form = () => {
     } = await fastAPI.inferAgentAndResponseTypes({ prompt: input });
 
     await fastAPI.createStream({
+      route: "stream",
+      threadId,
       agentModel,
       agentSystemInstructions,
+      requestId: newRequestId,
       prompt: input,
-      onStart: async () => {
-        await indexedDB.addReqRes({
-          threadId: threadId,
-          reqres: {
-            requestId: newRequestId,
-            requestBody: input,
-            responseId: newResponseId,
-            responseBody: "",
-            responseType: responseBodyType,
-            inferredAgentType,
-          } as ReqRes
-        });
-      },
-      onToken: async (accumulatedResponse) => {
-        await indexedDB.updateReqRes({
-          threadId: threadId,
-          reqres: {
-            requestId: newRequestId,
-            requestBody: input,
-            responseId: newResponseId,
-            responseBody: accumulatedResponse,
-            responseType: responseBodyType,
-            inferredAgentType,
-          } as ReqRes
-        });
-      },
-      onDone: async (accumulatedResponse) => {
-        await express.addReqRes({
-          threadId,
-          requestId: newRequestId,
-          requestBody: input,
-          responseId: newResponseId,
-          responseBody: accumulatedResponse,
-          responseType: responseBodyType
-        }); 
-      },
-      onError: async (accumulatedResponse) => {
-        await indexedDB.updateReqRes({
-          threadId: threadId,
-          reqres: {
-            requestId: newRequestId,
-            requestBody: input,
-            responseId: newResponseId,
-            responseBody: accumulatedResponse,
-            responseType: responseBodyType,
-            inferredAgentType,
-          } as ReqRes
-        });
-      },
+      responseId: newResponseId,
+      responseType: responseBodyType,
+      inferredAgentType,
     });
-
+    
     setInput('');
 
     if (threadBodyLength === 0) {

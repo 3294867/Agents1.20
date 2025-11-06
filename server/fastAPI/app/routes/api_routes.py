@@ -1,13 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import asyncio
-from app.models.request_models import CreateResponseRequest, CreateResponse, CreateThreadName, CreateStream, InferAgentAndResponseTypes
+from app.models.request_models import CreateResponseRequest, CreateResponse, CreateThreadName, CreateStream, InferAgentAndResponseTypes, CreateTable, Request
 from app.services.create_combined_response import create_combined_response
 from app.services.infer_agent_type import infer_agent_type
 from app.services.infer_response_type import infer_response_type
 from app.services.create_thread_name import create_thread_name
+from app.services.create_intro import create_intro
+from app.services.create_table import create_table
+from app.services.create_outro import create_outro
 from app.utils.get_client import get_client
-from app import responses
 
 router = APIRouter(prefix="/api", tags=["API Endpoints"])
 
@@ -51,8 +53,8 @@ async def create_thread_name_endpoint(input: CreateThreadName):
 async def infer_agent_and_response_types_endpoint(request: InferAgentAndResponseTypes):
     try:
         agent_type, response_type = await asyncio.gather(
-            responses.infer_agent_type(request.prompt),
-            responses.infer_response_type(request.prompt)
+            infer_agent_type(request.prompt),
+            infer_response_type(request.prompt)
         )
         return {"message": "Success", "data": {
             "inferredAgentType": agent_type,
@@ -92,3 +94,27 @@ async def stream(request: CreateStream):
         except Exception as e:
             yield f"data: [ERROR] {str(e)}\n\n"
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+@router.post("/create-intro")
+async def create_intro_endpoint(request: CreateResponse):
+    await create_intro(
+        request.agentModel,
+        request.agentSystemInstructions,
+        request.prompt 
+    )
+    
+@router.post("/create-table")
+async def create_table_endpoint(request: CreateTable):
+    try:
+        result = await create_table(request.prompt)
+        return {"message": "Success", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/create-outro")
+async def create_outro_endpoint(request: CreateResponse):
+    await create_outro(
+        request.agentModel,
+        request.agentSystemInstructions,
+        request.prompt
+    )

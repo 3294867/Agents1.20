@@ -1,29 +1,13 @@
 import asyncio
 from ..utils.get_client import get_client
 
-async def create_intro(agentModel, agentSystemInstructions, prompt: str) -> str:
+async def create_text(agentModel, agentSystemInstructions, prompt: str) -> str:
     async def event_generator():
         try:
             async with get_client().responses.stream(
                 model=agentModel,
                 instructions=agentSystemInstructions,
-                input=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "Acknowladge user request"
-                            "Example:\n\n"
-                            "Prompt:"
-                            "List all La Liga winners since 2020\n\n"
-                            "Response:"
-                            "Sure, here is a list of La Liga winners since 2020:\n\n"
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
+                input=prompt
             ) as stream:
                 async for event in stream:
                     if event.type == "response.output_item.added":

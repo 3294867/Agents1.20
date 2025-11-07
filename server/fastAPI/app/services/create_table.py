@@ -13,7 +13,7 @@ async def create_table(prompt: str) -> str:
                     "Prompt:"
                     "List all La Liga winners since 2020\n\n"
                     "Response:"
-                    "{\"columns\": [\"Season\", \"Winner\"], \"rows\": [[\"2020–21\", \"Atlético Madrid\"], [\"2021–22\", \"Real Madrid\"], [\"2022–23\", \"FC Barcelona\"], [\"2023–24\", \"Real Madrid\"], [\"2024–25\", \"Real Madrid\"]]} \n\n"
+                    "{\"columns\": [\"Season\", \"Winner\"], \"rows\": [{\"season\": \"2020–21\", \"winner\": \"Atlético Madrid\"}, {\"season\": \"2021–22\", \"winner\": \"Real Madrid\"}, {\"season\": \"2022–23\", \"winner\": \"FC Barcelona\"}, {\"season\": \"2023–24\", \"winner\": \"Real Madrid\"}, {\"season\": \"2024–25\", \"winner\": \"Real Madrid\"}]} \n\n"
                 )
             },
             {

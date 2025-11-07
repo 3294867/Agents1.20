@@ -35,6 +35,12 @@ const Form = () => {
       inferredResponseType: responseBodyType
     } = await fastAPI.inferAgentAndResponseTypes({ prompt: input });
 
+    await fastAPI.createIntro({
+      agentModel,
+      agentSystemInstructions,
+      prompt: input
+    });
+    
     await fastAPI.createStream({
       route: "stream",
       threadId,

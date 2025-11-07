@@ -1,4 +1,3 @@
-from fastapi.responses import StreamingResponse
 import asyncio
 from ..utils.get_client import get_client
 
@@ -43,4 +42,4 @@ async def create_outro(agentModel, agentSystemInstructions, prompt: str) -> str:
         except Exception as e:
             yield f"data: [ERROR] {str(e)}\n\n"
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    return event_generator

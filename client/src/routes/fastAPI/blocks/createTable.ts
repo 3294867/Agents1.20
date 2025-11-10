@@ -1,8 +1,12 @@
+import indexedDB from 'src/storage/indexedDB';
+
 interface Props {
+    threadId: string;
+    requestId: string;
     prompt: string;
 }
 
-const createTable = async ({ prompt }: Props): Promise<string> => {
+const createTable = async ({threadId, requestId, prompt}: Props): Promise<{type: string, content: string}> => {
     try {
         const response = await fetch(`${import.meta.env.VITE_FASTAPI_URL}/api/create-table`, {
             method: 'POST',
@@ -15,7 +19,13 @@ const createTable = async ({ prompt }: Props): Promise<string> => {
         const body: { message: string, data: string } = await response.json();
         if (!body.data) throw new Error(`Failed to create table: ${body.message}`);
         
-        return body.data;
+        await indexedDB.updateReqResResponseBody({
+            threadId,
+            requestId,
+            responseBodyItem: {type: 'table', content: body.data},
+        });
+
+        return {type: 'table', content: body.data};
     } catch (e) {
         throw new Error(`Failed to create table: ${e}`)
     }

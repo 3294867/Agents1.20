@@ -43,14 +43,18 @@ interface AddAgent {
   webSearch: boolean
 }
 
-type ResponseType = 'paragraph' | 'bullet-list' | 'table'
+type ResponseType = 'text' | 'bullet-list' | 'table'
+
+type ResponseBody = {
+  type: ResponseType;
+  content: string;
+}[]
 
 type ReqRes = {
   requestId: string;
   requestBody: string;
   responseId: string;
-  responseBody: string;
-  responseType: ResponseType;
+  responseBody: ResponseBody;
   inferredAgentType: AgentType;
 }
 
@@ -95,6 +99,7 @@ export type {
   Agent,
   AddAgent,
   ResponseType,
+  ResponseBody,
   ReqRes,
   Thread,
   Tab,

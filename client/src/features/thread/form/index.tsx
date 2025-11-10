@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { v4 as uuidV4 } from 'uuid';
 import { AgentModel } from 'src/types';
 import fastAPI from 'src/routes/fastAPI';
 import express from 'src/routes/express';
@@ -26,39 +25,36 @@ const Form = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    const newRequestId = uuidV4();
-    const newResponseId = uuidV4();
-    
-    const {
-      inferredAgentType,
-      inferredResponseType: responseBodyType
-    } = await fastAPI.inferAgentAndResponseTypes({ prompt: input });
 
-    await fastAPI.createIntro({
-      agentModel,
-      agentSystemInstructions,
-      prompt: input
-    });
-    
-    await fastAPI.createStream({
-      route: "stream",
+    setInput('');
+
+    const [reqResIds, agentType, responseType] = await Promise.all([
+      express.addReqRes({threadId, requestBody: input}),
+      fastAPI.blocks.inferAgentType({prompt: input}),
+      fastAPI.blocks.inferResponseType({prompt: input}),
+    ]);    
+
+    const props = {
       threadId,
       agentModel,
       agentSystemInstructions,
-      requestId: newRequestId,
       prompt: input,
-      responseId: newResponseId,
-      responseType: responseBodyType,
-      inferredAgentType,
-    });
-    
-    setInput('');
+      requestId: reqResIds.requestId,
+      responseId: reqResIds.responseId,
+      inferredAgentType: agentType
+    };
 
+    if (responseType === 'text') {
+      await fastAPI.createTextResponse(props)
+    } else if (responseType === 'bullet-list') {
+      await fastAPI.createBulletListResponse(props)
+    } else {
+      await fastAPI.createTableResponse(props)
+    }
+    
     if (threadBodyLength === 0) {
-      const threadName = await fastAPI.createThreadName({
-        question: input,
-        answer: ""
+      const threadName = await fastAPI.blocks.createThreadName({
+        prompt: input,
       });
       await express.updateThreadName({ threadId, threadName });
       await indexedDB.updateThreadName({ threadId, threadName });

@@ -1,7 +1,7 @@
 import asyncio
 from ..utils.get_client import get_client
 
-async def create_text(agentModel, agentSystemInstructions, prompt: str) -> str:
+async def create_text_response(agentModel, agentSystemInstructions, prompt: str) -> str:
     async def event_generator():
         try:
             async with get_client().responses.stream(
@@ -15,7 +15,7 @@ async def create_text(agentModel, agentSystemInstructions, prompt: str) -> str:
                     elif event.type == "response.output_text.delta":
                         yield f"data: {event.delta}\n\n"
                         await asyncio.sleep(0)
-                    if event.type == "response.output_text.done":
+                    elif event.type == "response.output_text.done":
                         yield f"data: [DONE]\n\n"
                     elif event.type == "response.error":
                         yield f"data: [ERROR] {event.error}\n\n"

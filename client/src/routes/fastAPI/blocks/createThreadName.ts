@@ -1,14 +1,9 @@
-interface Props {
-  question: string;
-  answer: string,
-}
-
-const createThreadName = async ({ question, answer }: Props): Promise<string> => {
+const createThreadName = async ({prompt}: {prompt: string}): Promise<string> => {
   try {
     const response = await fetch(`${import.meta.env.VITE_FASTAPI_URL}/api/create-thread-name`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, answer })
+      body: JSON.stringify({ prompt })
     });
     
     if (!response.ok) {

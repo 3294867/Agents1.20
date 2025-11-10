@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import { ResponseBody } from '../types';
 import { pool } from "../index";
 import utils from '../utils';
 
 interface RequestBody {
   responseId: string;
-  responseBody: string;
+  responseBody: ResponseBody;
 }
 
 const updateResponseBody = async (req: Request, res: Response): Promise<void> => {
@@ -16,10 +17,10 @@ const updateResponseBody = async (req: Request, res: Response): Promise<void> =>
   try {
     const updateResponse = await pool.query(`
       UPDATE responses
-      SET body = $1::text
+      SET body = $1::jsonb
       WHERE id = $2::uuid
       RETURNING id;
-    `, [ responseBody, responseId ]);
+    `, [ JSON.stringify(responseBody), responseId ]);
     if (updateResponse.rows.length === 0) return utils.sendResponse({ res, status: 503, message: "Failed to update response body" });
     
     utils.sendResponse({ res, status: 200, message: "Response body updated" });

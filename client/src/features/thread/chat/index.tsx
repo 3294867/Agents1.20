@@ -20,12 +20,7 @@ const Chat = memo(() => {
         {threadBody.length > 0 && threadBody.map((i, idx) => (
           <div key={idx} className={styles.messageGroup}>
             <Question key={i.requestId} reqres={i} />
-            <Answer
-              requestId={i.requestId}
-              responseId={i.responseId}
-              responseBody={i.responseBody}
-              inferredAgentType={i.inferredAgentType}
-            />
+            <Answer responseBody={i.responseBody} />
           </div>
         ))}
       </div>

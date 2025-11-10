@@ -13,7 +13,7 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-table": "^8.21.3",
-    "dexie": "^4.2.0",
+    "dexie": "^4.2.1",
     "dexie-react-hooks": "^4.2.0",
     "dotenv": "^16.5.0",
     "framer-motion": "^12.7.4",

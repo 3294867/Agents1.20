@@ -22,6 +22,7 @@ import getWorkspaces from 'src/storage/indexedDB/getWorkspaces';
 import getAgentId from 'src/storage/indexedDB/getAgentId';
 import getAgent from 'src/storage/indexedDB/getAgent';
 import removeThreadName from 'src/storage/indexedDB/removeThreadName';
+import updateReqResResponseBody from './updateReqResResponseBody';
 
 const indexedDB = {
   initialize,
@@ -48,6 +49,7 @@ const indexedDB = {
   pauseResponse,
   getFirstReqRes,
   addThread,
+  updateReqResResponseBody,
 };
 
 export default indexedDB;

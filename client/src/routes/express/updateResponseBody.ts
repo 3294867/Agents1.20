@@ -1,6 +1,8 @@
+import { ResponseBody } from 'src/types';
+
 interface Props {
   responseId: string;
-  responseBody: string;
+  responseBody: ResponseBody;
 }
 
 const updateResponseBody = async ({ responseId, responseBody }: Props): Promise<void> => {
@@ -8,7 +10,10 @@ const updateResponseBody = async ({ responseId, responseBody }: Props): Promise<
     const response = await fetch(`${import.meta.env.VITE_EXPRESS_URL}/api/update-response-body`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ responseId, responseBody })
+      body: JSON.stringify({
+        responseId,
+        responseBody
+      })
     });
     
     if (!response.ok) {

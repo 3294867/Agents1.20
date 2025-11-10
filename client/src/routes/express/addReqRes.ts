@@ -1,30 +1,29 @@
 interface Props {
   threadId: string;
-  requestId: string;
   requestBody: string;
-  responseId: string;
-  responseBody: string;
-  responseType: string;
 }
 
-const addReqRes = async ({ threadId, requestId, requestBody, responseId, responseBody, responseType }: Props): Promise<void> => {
+interface ReturnData {
+  requestId: string;
+  responseId: string;
+}
+
+const addReqRes = async ({ threadId, requestBody }: Props): Promise<ReturnData> => {
   try {
     const response = await fetch(`${import.meta.env.VITE_EXPRESS_URL}/api/add-reqres`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        threadId, requestId, requestBody, responseId, responseBody, responseType
+        threadId, requestBody
       })
     });
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to add reqres (PostgresDB): ${response.status} ${response.statusText} - ${errorText}`);
-    }
+    if (!response.ok) throw new Error(`Failed to add reqres (PostgresDB): ${response.text()}`);
     
-    const data: { message: string } = await response.json();
-    if (data.message !== "Success") throw new Error(data.message);
-    
+    const body: {message: string, data: ReturnData | null} = await response.json();
+    if (!body.data) throw new Error(body.message);
+
+    return body.data;    
   } catch (error) {
     throw new Error(`Failed to add reqres (PostgresDB): ${error}`);
   }

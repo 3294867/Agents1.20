@@ -11,13 +11,12 @@ async def create_intro(agentModel, agentSystemInstructions, prompt: str) -> str:
                     {
                         "role": "system",
                         "content": (
-                            "Acknowladge user request"
+                            "You will respond to the prompt with the next API call.\n"
+                            "Return ONLY a short introductory sentence.\n"
                             "Example:\n\n"
-                            "Prompt:"
-                            "List all La Liga winners since 2020\n\n"
-                            "Response:"
-                            "Sure, here is a list of La Liga winners since 2020:\n\n"
-                        )
+                            "Prompt: \"List La Liga winners since 2020.\"\n"
+                            "Response: \"Sure! Here is a list of La Liga winners since 2020:\"\n\n"
+                        ),
                     },
                     {
                         "role": "user",

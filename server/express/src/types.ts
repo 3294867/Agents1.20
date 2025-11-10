@@ -81,11 +81,16 @@ interface ThreadPG {
   updated_at: Date;
 }
 
+type ResponseBody = {
+  type: string;
+  content: string;
+}[]
+
 type ReqResFE = {
   requestId: string;
   requestBody: string;
   responseId: string;
-  responseBody: string;
+  responseBody: ResponseBody;
   inferredAgentType: AgentType;
   isNew: boolean;
 }
@@ -126,6 +131,7 @@ export type {
   ResponseType,
   ReqResPG,
   ThreadPG,
+  ResponseBody,
   ReqResFE,
   ThreadFE,
   NotificationFE

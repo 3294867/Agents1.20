@@ -11,6 +11,7 @@ const addReqRes = async ({ threadId, reqres }: Props): Promise<void> => {
   try {
     const savedThread = await db.threads.get(threadId);
     if (!savedThread) throw new Error('Thread not found');
+
     const threadBodyArray = Array.isArray(savedThread.body) ? savedThread.body : [];
     const updatedThread = await db.threads.update(threadId, {
       body: [...threadBodyArray, reqres]

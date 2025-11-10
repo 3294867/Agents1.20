@@ -5,17 +5,13 @@ import { ReqResPG } from '../types';
 
 interface RequestBody {
   threadId: string;
-  requestId: string;
   requestBody: string;
-  responseId: string;
-  responseBody: string;
-  responseType: string;
 }
 
 const addReqRes = async (req: Request, res: Response): Promise<void> => {
-  const { threadId, requestId, requestBody, responseId, responseBody, responseType }: RequestBody = req.body;
+  const { threadId, requestBody }: RequestBody = req.body;
 
-  const validationError = await utils.validate.addReqRes({ threadId, requestBody, responseBody, responseType });
+  const validationError = utils.validate.addReqRes({ threadId, requestBody });
   if (validationError) return utils.sendResponse({ res, status: 400, message: validationError });
 
   try {
@@ -23,10 +19,10 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
     /** Request */
     const addRequest = await pool.query(`
-      INSERT INTO requests (id, body)
-      VALUES ($1::uuid, $2::text)
+      INSERT INTO requests (body)
+      VALUES ($1::text)
       RETURNING id;
-    `, [ requestId, requestBody ]);
+    `, [ requestBody ]);
     if (addRequest.rows.length === 0) {
       await pool.query(`ROLLBACK`);
       return utils.sendResponse({ res, status: 503, message: "Failed to add request" });
@@ -44,10 +40,10 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
     /** Response */
     const addResponse = await pool.query(`
-      INSERT INTO responses (id, body, type)
-      VALUES ($1::uuid, $2::text, $3::text)
+      INSERT INTO responses (id)
+      VALUES (gen_random_uuid()::uuid)
       RETURNING id;
-    `, [ responseId, responseBody, responseType ]);
+    `);
     if (addResponse.rows.length === 0) {
       await pool.query(`ROLLBACK`);
       return utils.sendResponse({ res, status: 503, message: "Failed to add response" });
@@ -94,14 +90,19 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({
       message: "Success",
+      data: {
+        requestId: addRequest.rows[0].id,
+        responseId: addResponse.rows[0].id
+      }
+
     });
-  } catch (error) {
+  } catch (e) {
     try {
       await pool.query(`ROLLBACK`);
-    } catch (rollbackError) {
-      console.error("Rollback error: ", rollbackError);
+    } catch (re) {
+      console.error("Rollback error: ", re);
     }
-    console.error("Failed to add reqres: ", error);
+    console.error("Failed to add reqres: ", e);
     utils.sendResponse({ res, status: 500, message: "Internal server error" });
   }
 };

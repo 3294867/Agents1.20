@@ -1,8 +1,9 @@
 import utils from '..';
+import { ResponseBody } from '../../types';
 
 interface Props {
   responseId: string;
-  responseBody: string;
+  responseBody: ResponseBody;
 }
 
 const updateResponseBody = ({ responseId, responseBody }: Props): string | null => {

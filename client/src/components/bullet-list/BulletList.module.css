@@ -1,0 +1,7 @@
+.li {
+    font-family: var(--font-poppins);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.75rem;
+    line-height: 2;
+}

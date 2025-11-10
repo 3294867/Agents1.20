@@ -1,9 +1,9 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 const WorkspaceMembersTableContext = createContext<{
-  workspaceId: string;
-  workspaceName: string;
-  memberNames: string[]
+    workspaceId: string;
+    workspaceName: string;
+    memberNames: string[];
 } | null>(null);
 
 export default WorkspaceMembersTableContext;

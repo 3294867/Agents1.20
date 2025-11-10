@@ -1,91 +1,93 @@
-import { useOutletContext, useParams } from 'react-router-dom';
-import { AgentModel, AgentType } from 'src/types';
-import hooks from 'src/hooks';
-import Error from 'src/components/error';
-import ThreadContext from './ThreadContext';
-import Header from './header';
-import Chat from './chat';
-import SideNav from './SideNav';
-import Form from './form';
-import Icons from 'src/assets/icons';
-import styles from './Thread.module.css'
+import { useOutletContext, useParams } from "react-router-dom";
+import { AgentModel, AgentType } from "src/types";
+import hooks from "src/hooks";
+import Error from "src/components/error";
+import ThreadContext from "./ThreadContext";
+import Header from "./header";
+import Chat from "./chat";
+import SideNav from "./SideNav";
+import Form from "./form";
+import Icons from "src/assets/icons";
+import styles from "./Thread.module.css";
 
 interface OutletContext {
-  userId: string;
-  workspaceId: string;
-  workspaceName: string;
-  agentId: string;
-  agentName: string;
-  agentType: AgentType;
-  agentModel: AgentModel;
-  agentSystemInstructions: string;
-  isMobile: boolean;
+    userId: string;
+    workspaceId: string;
+    workspaceName: string;
+    agentId: string;
+    agentName: string;
+    agentType: AgentType;
+    agentModel: AgentModel;
+    agentSystemInstructions: string;
+    isMobile: boolean;
 }
 
 const Thread = () => {
-  const {
-    userId,
-    workspaceId,
-    workspaceName,
-    agentId,
-    agentName,
-    agentType,
-    agentModel,
-    agentSystemInstructions,
-    isMobile
-  } = useOutletContext<OutletContext>();
-  const { threadId } = useParams();
-  const { thread, isLoading, error } = hooks.features.useHandleThread({
-    workspaceId,
-    workspaceName,
-    agentId,
-    agentName,
-    threadId
-  });
+    const {
+        userId,
+        workspaceId,
+        workspaceName,
+        agentId,
+        agentName,
+        agentType,
+        agentModel,
+        agentSystemInstructions,
+        isMobile,
+    } = useOutletContext<OutletContext>();
+    const { threadId } = useParams();
+    const { thread, isLoading, error } = hooks.features.useHandleThread({
+        workspaceId,
+        workspaceName,
+        agentId,
+        agentName,
+        threadId,
+    });
 
-  if (isLoading) return <Loading />;
-  if (error || !workspaceName || !agentName || !threadId || !thread) {
-    return <Error error={error ?? 'Something went wrong. Try again later.'} />;
-  }
+    if (isLoading) return <Loading />;
+    if (error || !workspaceName || !agentName || !threadId || !thread) {
+        return (
+            <Error error={error ?? "Something went wrong. Try again later."} />
+        );
+    }
 
-  const threadContext = {
-    userId,
-    workspaceId,
-    workspaceName,
-    agentId,
-    agentName,
-    agentType,
-    agentModel,
-    agentSystemInstructions,
-    threadId: thread.id,
-    threadName: thread.name,
-    threadBody: thread.body,
-    threadBodyLength: thread.body.length,
-    threadIsBookmarked: thread.isBookmarked,
-    threadIsShared: thread.isShared,
-    threadIsActive: thread.isActive,
-    threadPositionY: thread.positionY,
-    isMobile
-  };
+    const threadContext = {
+        userId,
+        workspaceId,
+        workspaceName,
+        agentId,
+        agentName,
+        agentType,
+        agentModel,
+        agentSystemInstructions,
+        threadId: thread.id,
+        threadName: thread.name,
+        threadBody: thread.body,
+        threadBodyLength: thread.body.length,
+        threadIsBookmarked: thread.isBookmarked,
+        threadIsShared: thread.isShared,
+        threadIsActive: thread.isActive,
+        threadPositionY: thread.positionY,
+        isMobile,
+    };
 
-  return (
-    <main id='thread' className={styles.main}>
-      <ThreadContext.Provider value={threadContext}>
-        <Header />
-        <Chat />
-        <SideNav />
-        <Form />
-      </ThreadContext.Provider>
-    </main>
-  );
+    return (
+        <main id="thread" className={styles.main}>
+            <ThreadContext.Provider value={threadContext}>
+                <Header />
+                <Chat />
+                <SideNav />
+                <Form />
+            </ThreadContext.Provider>
+        </main>
+    );
 };
 
 export default Thread;
 
 const Loading = () => {
-  return (
-    <div className={styles.loadingContainer}>
-      <Icons.Loader className={styles.loadingSpinner} />
-    </div>
-  );
+    return (
+        <div className={styles.loadingContainer}>
+            <Icons.Loader className={styles.loadingSpinner} />
+        </div>
+    );
 };

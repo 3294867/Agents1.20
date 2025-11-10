@@ -1,7 +1,7 @@
-import isUuidV4 from './uuid';
+import isUuidV4 from "./uuid";
 
 const regex = {
-  isUuidV4,
+    isUuidV4,
 };
 
 export default regex;

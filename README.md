@@ -13,6 +13,7 @@ A modern AI agent management platform built with Express.js and React that allow
 ## 🏗️ Architecture
 
 ### Frontend (Client)
+
 - **Framework**: React 19 with TypeScript
 - **Build Tool**: Vite
 - **Styling**: CSS Modules
@@ -21,6 +22,7 @@ A modern AI agent management platform built with Express.js and React that allow
 - **UI Components**: Custom component library
 
 ### Backend (Server)
+
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js
 - **Database**: PostgreSQL
@@ -62,16 +64,19 @@ Agents1.16/
 ## 🎯 Usage
 
 ### Creating an Account
+
 1. Create a new account with username and password
 2. Log in to access the platform
 
 ### Using AI Agents
+
 2. Start a new conversation thread in the General Agent
 3. Type your questions or requests
 4. Receive AI-generated responses in real-time
 5. Add new Agent (Math, Geography, Literature) for more specific tasks
 
 ### Managing Threads
+
 - Create new threads for different topics
 - Bookmark important conversations
 - Navigate between multiple active threads
@@ -81,4 +86,4 @@ Agents1.16/
 
 - [ ] Advanced agent customization
 - [ ] File upload capabilities
-- [ ] Advanced analytics and insights 
+- [ ] Advanced analytics and insights

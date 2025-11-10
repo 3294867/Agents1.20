@@ -1,19 +1,19 @@
-import utils from '..';
+import utils from "..";
 
 interface Props {
-  agentId: string;
+    agentId: string;
 }
 
-const addThread = ({ agentId }: Props ): string | null => {
-  if (!agentId) {
-    return "Missing required fields: agentId";
-  }
+const addThread = ({ agentId }: Props): string | null => {
+    if (!agentId) {
+        return "Missing required fields: agentId";
+    }
 
-  if (!utils.regex.isUuidV4(agentId)) {
-    return "Incorrect format of agentId. Expected UUID_V4";
-  }
+    if (!utils.regex.isUuidV4(agentId)) {
+        return "Incorrect format of agentId. Expected UUID_V4";
+    }
 
-  return null;
+    return null;
 };
 
 export default addThread;

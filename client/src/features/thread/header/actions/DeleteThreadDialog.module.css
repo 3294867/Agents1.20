@@ -1,33 +1,33 @@
 .trigger {
-  width: 100;
+    width: 100;
 }
 
 .trigger:focus-visible {
-  background-color: var(--background-dropdown-button-hover);
+    background-color: var(--background-dropdown-button-hover);
 }
 
 .container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .paragraph {
-  margin-top: 2rem;
+    margin-top: 2rem;
 }
 
 .actions {
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  gap: 0.5rem;
-  margin-top: 2rem;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 0.5rem;
+    margin-top: 2rem;
 }
 
 .dropdownNestedDialog {
-  width: 100%;
-  min-width: unset;
-  max-width: unset;
-  padding: 0.5rem;
-  background: transparent;
+    width: 100%;
+    min-width: unset;
+    max-width: unset;
+    padding: 0.5rem;
+    background: transparent;
 }

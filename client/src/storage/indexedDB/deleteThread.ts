@@ -1,15 +1,15 @@
-import { db } from './initialize';
+import { db } from "./initialize";
 
 interface Props {
-  threadId: string;
+    threadId: string;
 }
 
 const deleteThread = async ({ threadId }: Props): Promise<void> => {
-  try {
-    await db.threads.delete(threadId);
-  } catch (error) {
-    throw new Error(`Failed to delete thread (IndexedDB): ${error}`);
-  }
+    try {
+        await db.threads.delete(threadId);
+    } catch (error) {
+        throw new Error(`Failed to delete thread (IndexedDB): ${error}`);
+    }
 };
 
 export default deleteThread;

@@ -1,85 +1,64 @@
-import { memo, useState } from 'react';
-import hooks from 'src/hooks';
-import PauseRunButton from './PauseRunButton';
-import EditButton from './EditButton';
-import DeleteButton from './DeleteButton';
-import MoveButton from './MoveButton';
-import ChangeAgentButton from './ChangeAgentButton';
-import { ReqRes } from 'src/types';
-import styles from './Question.module.css';
+import { memo, useState } from "react";
+import { ReqRes } from "src/types";
+import QuestionContext from './QuestionContext';
+import hooks from "src/hooks";
+import PauseRunButton from "./PauseRunButton";
+import EditButton from "./EditButton";
+import DeleteButton from "./DeleteButton";
+import MoveButton from "./MoveButton";
+import ChangeAgentButton from "./ChangeAgentButton";
+import styles from "./Question.module.css";
 
-interface Props {
-  reqres: ReqRes;
-}
+const Question = memo(({ reqres }: { reqres: ReqRes }) => {
+    const [input, setInput] = useState(reqres.requestBody);
+    const [isEditing, setIsEditing] = useState(false);
+    const { textareaRef } = hooks.features.useHandleQuestion({
+        input,
+        isEditing,
+    });
 
-const Question = memo(({ reqres }: Props) => {
-  const {
-    requestId,
-    requestBody,
-    responseId,
-    responseBody,
-    responseType,
-    inferredAgentType,
-    isNew
-  } = reqres;
-  const [input, setInput] = useState(requestBody);
-  const [isEditing, setIsEditing] = useState(false);
-  const { progressBarLength } = hooks.features.useChatContext();
-  const { textareaRef } = hooks.features.useHandleQuestion({ input, isEditing });
+    const context = {
+        requestId: reqres.requestId,
+        requestBody: reqres.requestBody,
+        responseId: reqres.responseId,
+        responseBody: reqres.responseBody,
+        inferredAgentType: reqres.inferredAgentType,
+        input,
+        setInput,
+        isEditing,
+        setIsEditing,
+        textareaRef
+    };
 
-  return (
-    <div className={styles.container}>
-      <div className={styles.actionButtons}>
-        <EditButton
-          requestId={requestId}
-          responseId={responseId}
-          setIsEditing={setIsEditing}
-        />
-        <DeleteButton
-          requestId={requestId}
-          responseId={responseId}
-        />
-        <MoveButton
-          requestId={requestId}
-          requestBody={requestBody}
-          responseId={responseId}
-          responseBody={responseBody}
-          responseType={responseType}
-          inferredAgentType={inferredAgentType}
-        />
-      </div>
-      <div id={`request_${requestId}`} className={styles.questionCard + (isNew ? ` ${styles.isNew}` : '')}>
-        <div className={styles.inputRow + (isNew ? ` ${styles.isNew}` : '')}>
-          <textarea
-            id={`textarea_${requestId}`}
-            ref={textareaRef}
-            disabled={!isEditing}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onBlur={() => setTimeout(() => setIsEditing(false), 100)}
-            spellCheck='false'
-            className={styles.textarea}
-          />
-          <div style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', display: 'flex' }}>
-            <ChangeAgentButton
-              reqres={reqres}
-              isEditing={isEditing}
-            />
-            <PauseRunButton
-              requestId={requestId}
-              responseId={responseId}
-              inferredAgentType={inferredAgentType}
-              isNew={isNew}
-              input={input}
-              isEditing={isEditing}
-              setIsEditing={setIsEditing}
-            />
-          </div>
-        </div>
-        {isNew && <div style={{ width: `${progressBarLength * 100}%` }} className={styles.progressBar} />}
-      </div>
-    </div>
-  );
+    return (
+        <QuestionContext.Provider value={context}>
+            <div className={styles.container}>
+                <div className={styles.actionButtons}>
+                    <EditButton />
+                    <DeleteButton />
+                    <MoveButton />
+                </div>
+                <div id={`request_${reqres.requestId}`}>
+                    <div>
+                        <textarea
+                            id={`textarea_${reqres.requestId}`}
+                            ref={textareaRef}
+                            disabled={!isEditing}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onBlur={() => setTimeout(() => setIsEditing(false), 100)}
+                            spellCheck="false"
+                            className={styles.textarea}
+                        />
+                        <div className={styles.actionButtonsInside}>
+                            <ChangeAgentButton />
+                            <PauseRunButton />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </QuestionContext.Provider>
+    );
 });
 
 export default Question;

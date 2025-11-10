@@ -1,12 +1,12 @@
 interface Props {
-  requestId: string;
+    requestId: string;
 }
 
 const editingQuestion = ({ requestId }: Props) => {
-  const event = new CustomEvent('editingQuestion', {
-    detail: { requestId }
-  });
-  window.dispatchEvent(event);
+    const event = new CustomEvent("editingQuestion", {
+        detail: { requestId },
+    });
+    window.dispatchEvent(event);
 };
 
 export default editingQuestion;

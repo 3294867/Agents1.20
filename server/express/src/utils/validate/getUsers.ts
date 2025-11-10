@@ -1,13 +1,13 @@
 interface Props {
-  input: string;
+    input: string;
 }
 
 const getUsers = ({ input }: Props): string | null => {
-  if (!input) {
-    return "Missing required fields: agentType";
-  }
+    if (!input) {
+        return "Missing required fields: agentType";
+    }
 
-  return null;
+    return null;
 };
 
 export default getUsers;

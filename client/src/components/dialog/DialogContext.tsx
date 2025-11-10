@@ -1,12 +1,12 @@
-import { createContext, RefObject } from 'react';
+import { createContext, RefObject } from "react";
 
 interface DialogContextType {
-  dialogRef: RefObject<HTMLDivElement | null>;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  dialogId: string;
-  titleId: string;
-  descriptionId: string;
+    dialogRef: RefObject<HTMLDivElement | null>;
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+    dialogId: string;
+    titleId: string;
+    descriptionId: string;
 }
 
 const DialogContext = createContext<DialogContextType | null>(null);

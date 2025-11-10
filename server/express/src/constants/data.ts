@@ -1,32 +1,28 @@
-import { AgentModel, AgentType, ResponseType } from '../types';
+import { AgentModel, AgentType, ResponseType } from "../types";
 
 const agentModels = [
-  'gpt-4.1',
-  'gpt-4o',
-  'gpt-4o-mini',
-  'gpt-5',
-  'gpt-5-mini',
-  'gpt-5-nano',
-  'gpt-5-pro'
+    "gpt-4.1",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "gpt-5-pro",
 ] as AgentModel[];
 
 const agentTypes = [
-  'general',
-  'data-analyst',
-  'copywriter',
-  'devops-helper'
+    "general",
+    "data-analyst",
+    "copywriter",
+    "devops-helper",
 ] as AgentType[];
 
-const responseTypes = [
-  'paragraph',
-  'bullet-list',
-  'table'
-] as ResponseType[];
+const responseTypes = ["paragraph", "bullet-list", "table"] as ResponseType[];
 
 const data = {
-  agentModels,
-  agentTypes,
-  responseTypes
+    agentModels,
+    agentTypes,
+    responseTypes,
 };
 
 export default data;

@@ -1,19 +1,19 @@
-import utils from '..';
+import utils from "..";
 
 interface Props {
-  userId: string;
+    userId: string;
 }
 
 const getWorkspaces = ({ userId }: Props): string | null => {
-  if (!userId) {
-    return "Missing required fields: userId";
-  }
+    if (!userId) {
+        return "Missing required fields: userId";
+    }
 
-  if (!utils.regex.isUuidV4(userId)) {
-    return "Incorrect format of userId. Expected UUID_V4";
-  }
+    if (!utils.regex.isUuidV4(userId)) {
+        return "Incorrect format of userId. Expected UUID_V4";
+    }
 
-  return null;
+    return null;
 };
 
 export default getWorkspaces;

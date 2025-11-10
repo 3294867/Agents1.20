@@ -1,5 +1,5 @@
-import { AgentModel, AgentType } from 'src/types';
-import fastAPI from '.';
+import { AgentModel, AgentType } from "src/types";
+import fastAPI from ".";
 
 interface Props {
     threadId: string;
@@ -8,7 +8,7 @@ interface Props {
     requestId: string;
     responseId: string;
     prompt: string;
-    inferredAgentType: AgentType
+    inferredAgentType: AgentType;
 }
 
 const createTableResponse = async ({
@@ -18,7 +18,7 @@ const createTableResponse = async ({
     requestId,
     responseId,
     prompt,
-    inferredAgentType
+    inferredAgentType,
 }: Props): Promise<void> => {
     await fastAPI.blocks.createIntro({
         threadId,
@@ -33,7 +33,7 @@ const createTableResponse = async ({
     await fastAPI.blocks.createTable({
         threadId,
         requestId,
-        prompt
+        prompt,
     });
 
     await fastAPI.blocks.createOutro({
@@ -41,7 +41,7 @@ const createTableResponse = async ({
         agentModel,
         agentSystemInstructions,
         requestId,
-        prompt
+        prompt,
     });
 };
 

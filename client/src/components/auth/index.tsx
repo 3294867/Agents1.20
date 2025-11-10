@@ -1,7 +1,7 @@
-import Provider from './Provider';
+import Provider from "./Provider";
 
 const Auth = {
-  Provider,
+    Provider,
 };
 
 export default Auth;

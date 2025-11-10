@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
-  "python.envFile": "${workspaceFolder}/.env",
-  "python.autoComplete.extraPaths": ["${workspaceFolder}/app"]
+    "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.autoComplete.extraPaths": ["${workspaceFolder}/app"]
 }

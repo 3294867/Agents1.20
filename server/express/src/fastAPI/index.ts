@@ -1,7 +1,7 @@
-import inferAgentType from './inferAgentType';
+import inferAgentType from "./inferAgentType";
 
 const fastAPI = {
-  inferAgentType,
+    inferAgentType,
 };
 
 export default fastAPI;

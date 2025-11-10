@@ -1,19 +1,19 @@
-import utils from '..';
+import utils from "..";
 
 interface Props {
-  notificationId: string;
+    notificationId: string;
 }
 
 const dismissWorkspaceInvite = ({ notificationId }: Props): string | null => {
-  if (!notificationId) {
-    return 'Missing required fields: notificationId';
-  }
+    if (!notificationId) {
+        return "Missing required fields: notificationId";
+    }
 
-  if (!utils.regex.isUuidV4(notificationId)) {
-    return 'Incorrect format of notificationId. Expected UUID_V4';
-  }
+    if (!utils.regex.isUuidV4(notificationId)) {
+        return "Incorrect format of notificationId. Expected UUID_V4";
+    }
 
-  return null;
+    return null;
 };
 
 export default dismissWorkspaceInvite;

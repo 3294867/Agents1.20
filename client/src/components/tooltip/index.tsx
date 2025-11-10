@@ -1,11 +1,11 @@
-import Root from './Root';
-import Trigger from './Trigger';
-import Content from './Content';
+import Root from "./Root";
+import Trigger from "./Trigger";
+import Content from "./Content";
 
 const Tooltip = {
-  Root,
-  Trigger,
-  Content
+    Root,
+    Trigger,
+    Content,
 };
 
 export default Tooltip;

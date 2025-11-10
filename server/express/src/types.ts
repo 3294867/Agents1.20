@@ -1,138 +1,145 @@
-type UserRole = 'admin' | 'editor' | 'viewer' 
+type UserRole = "admin" | "editor" | "viewer";
 
 type WorkspaceMember = {
-  memberId: string;
-  memberName: string;
-  memberRole: 'admin' | 'editor' | 'viewer';
-}
+    memberId: string;
+    memberName: string;
+    memberRole: "admin" | "editor" | "viewer";
+};
 
 interface WorkspacePG {
-  id: string;
-  name: string;
-  description: string;
-  created_at: Date;
-  updated_at: Date;
+    id: string;
+    name: string;
+    description: string;
+    created_at: Date;
+    updated_at: Date;
 }
 
 interface WorkspaceFE {
-  id: string;
-  name: string;
-  description: string;
-  userRole: UserRole;
-  agentIds: string[];
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    name: string;
+    description: string;
+    userRole: UserRole;
+    agentIds: string[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-type AgentType = 'general' | 'data-analyst' | 'copywriter' | 'devops-helper'
-type AgentModel = 'gpt-4.1' | 'gpt-4o' | 'gpt-4o-mini' | 'gpt-5' | 'gpt-5-mini' | 'gpt-5-nano' | 'gpt-5-pro'
+type AgentType = "general" | "data-analyst" | "copywriter" | "devops-helper";
+type AgentModel =
+    | "gpt-4.1"
+    | "gpt-4o"
+    | "gpt-4o-mini"
+    | "gpt-5"
+    | "gpt-5-mini"
+    | "gpt-5-nano"
+    | "gpt-5-pro";
 
 interface AgentPG {
-  id: string;
-  name: string;
-  type: AgentType;
-  model: AgentModel;
-  system_instructions: string;
-  stack: string[] | null;
-  temperature: number;
-  web_search: boolean;
-  created_at: Date;
-  updated_at: Date;
+    id: string;
+    name: string;
+    type: AgentType;
+    model: AgentModel;
+    system_instructions: string;
+    stack: string[] | null;
+    temperature: number;
+    web_search: boolean;
+    created_at: Date;
+    updated_at: Date;
 }
 
 interface AgentFE {
-  id: string;
-  name: string;
-  type: AgentType;
-  model: AgentModel;
-  systemInstructions: string;
-  stack: string[] | [];
-  temperature: number;
-  webSearch: boolean;
-  workspaceId: string;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    name: string;
+    type: AgentType;
+    model: AgentModel;
+    systemInstructions: string;
+    stack: string[] | [];
+    temperature: number;
+    webSearch: boolean;
+    workspaceId: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 interface AddAgent {
-  name: string;
-  type: AgentType;
-  model: AgentModel;
-  systemInstructions: string;
-  stack: string[];
-  temperature: number;
-  webSearch: boolean
+    name: string;
+    type: AgentType;
+    model: AgentModel;
+    systemInstructions: string;
+    stack: string[];
+    temperature: number;
+    webSearch: boolean;
 }
 
-type ResponseType = 'paragraph' | 'bullet-list' | 'table';
+type ResponseType = "paragraph" | "bullet-list" | "table";
 
 type ReqResPG = {
-  request_id: string;
-  response_id: string;
-}
+    request_id: string;
+    response_id: string;
+};
 
 interface ThreadPG {
-  id: string;
-  name: string;
-  body: ReqResPG[] | [];
-  is_bookmarked: boolean;
-  is_shared: boolean;
-  created_at: Date;
-  updated_at: Date;
+    id: string;
+    name: string;
+    body: ReqResPG[] | [];
+    is_bookmarked: boolean;
+    is_shared: boolean;
+    created_at: Date;
+    updated_at: Date;
 }
 
 type ResponseBody = {
-  type: string;
-  content: string;
-}[]
+    type: string;
+    content: string;
+}[];
 
 type ReqResFE = {
-  requestId: string;
-  requestBody: string;
-  responseId: string;
-  responseBody: ResponseBody;
-  inferredAgentType: AgentType;
-  isNew: boolean;
-}
+    requestId: string;
+    requestBody: string;
+    responseId: string;
+    responseBody: ResponseBody;
+    inferredAgentType: AgentType;
+    isNew: boolean;
+};
 
 interface ThreadFE {
-  id: string;
-  name: string;
-  body: ReqResFE[] | [];
-  isBookmarked: boolean;
-  isShared: boolean;
-  isActive: boolean;
-  agentId: string;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    name: string;
+    body: ReqResFE[] | [];
+    isBookmarked: boolean;
+    isShared: boolean;
+    isActive: boolean;
+    agentId: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-type NotificationTypeFE = 'workspace_invite'
+type NotificationTypeFE = "workspace_invite";
 
 interface NotificationFE {
-  id: string;
-  type: NotificationTypeFE;
-  message: string;
-  details: object;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    type: NotificationTypeFE;
+    message: string;
+    details: object;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export type {
-  UserRole,
-  WorkspaceMember,
-  WorkspacePG,
-  WorkspaceFE,
-  AgentType,
-  AgentModel,
-  AgentPG,
-  AgentFE,
-  AddAgent,
-  ResponseType,
-  ReqResPG,
-  ThreadPG,
-  ResponseBody,
-  ReqResFE,
-  ThreadFE,
-  NotificationFE
+    UserRole,
+    WorkspaceMember,
+    WorkspacePG,
+    WorkspaceFE,
+    AgentType,
+    AgentModel,
+    AgentPG,
+    AgentFE,
+    AddAgent,
+    ResponseType,
+    ReqResPG,
+    ThreadPG,
+    ResponseBody,
+    ReqResFE,
+    ThreadFE,
+    NotificationFE,
 };

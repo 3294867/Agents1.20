@@ -5,8 +5,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import router from "./route";
 import { createPool } from "./db";
-import { CustomPGSessionStore } from './sessionStore';
-import utils from './utils';
+import { CustomPGSessionStore } from "./sessionStore";
+import utils from "./utils";
 
 dotenv.config();
 
@@ -17,32 +17,36 @@ app.use(compression());
 
 export const pool = createPool();
 pool.connect((err, _, release) => {
-  if (err) return console.error("Error acquiring client.", err.stack);
-  console.debug("Database connected successfully.");
-  release();
+    if (err) return console.error("Error acquiring client.", err.stack);
+    console.debug("Database connected successfully.");
+    release();
 });
 
-app.use(session({
-  store: new CustomPGSessionStore(),
-  secret: process.env.SESSION_SECRET || "secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  }
-}));
+app.use(
+    session({
+        store: new CustomPGSessionStore(),
+        secret: process.env.SESSION_SECRET || "secret",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        },
+    }),
+);
 
 app.use("/api", router);
 
 app.listen(process.env.API_ROUTES_PORT, () => {
-  try {
-    console.debug(`Listening to api routes running on port ${process.env.API_ROUTES_PORT}.`);
-  } catch (error) {
-    console.error("Listening to api routes startup error: ", error);
-  }
+    try {
+        console.debug(
+            `Listening to api routes running on port ${process.env.API_ROUTES_PORT}.`,
+        );
+    } catch (error) {
+        console.error("Listening to api routes startup error: ", error);
+    }
 });
 
 utils.updateSeedPasswords();

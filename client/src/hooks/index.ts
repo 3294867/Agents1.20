@@ -1,9 +1,9 @@
-import components from './components/index';
-import features from './features';
+import components from "./components/index";
+import features from "./features";
 
 const hooks = {
-  features,
-  components
+    features,
+    components,
 };
 
 export default hooks;

@@ -1,15 +1,15 @@
-import { ReqRes } from 'src/types';
+import { ReqRes } from "src/types";
 
 interface Props {
-  threadId: string;
-  reqres: ReqRes;
+    threadId: string;
+    reqres: ReqRes;
 }
 
-const reqresUpdated =  ({ threadId, reqres }: Props) => {
-  const event = new CustomEvent('reqresUpdated', {
-    detail: { threadId, reqres }
-  });
-  window.dispatchEvent(event);
+const reqresUpdated = ({ threadId, reqres }: Props) => {
+    const event = new CustomEvent("reqresUpdated", {
+        detail: { threadId, reqres },
+    });
+    window.dispatchEvent(event);
 };
 
 export default reqresUpdated;

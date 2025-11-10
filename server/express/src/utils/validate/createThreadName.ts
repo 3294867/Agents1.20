@@ -1,14 +1,14 @@
 interface Props {
-  question: string;
-  answer: string;
+    question: string;
+    answer: string;
 }
 
 const createThreadName = ({ question, answer }: Props): string | null => {
-  if (!question || !answer) {
-    return "Missing required fields: question, answer";
-  }
+    if (!question || !answer) {
+        return "Missing required fields: question, answer";
+    }
 
-  return null;
+    return null;
 };
 
 export default createThreadName;

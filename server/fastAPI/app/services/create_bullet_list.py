@@ -10,7 +10,7 @@ async def create_bullet_list(prompt: str) -> str:
                     "Return ONLY an array, not plain text or explanations."
                     "Example:\n\n"
                     "Prompt: \"List all La Liga winners since 2020\"\n\n"
-                    "Response: [\"Atlético Madrid\", \"Real Madrid\", \"FC Barcelona\", \"Real Madrid\", \"Real Madrid\"] \n\n"
+                    "Response: \"[\"Atlético Madrid\", \"Real Madrid\", \"FC Barcelona\", \"Real Madrid\", \"Real Madrid\"]\" \n\n"
                 )
             },
             {

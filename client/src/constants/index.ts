@@ -1,4 +1,5 @@
-import { AgentModel, AgentType, ResponseType, UserRole } from "./types";
+import { AgentModel, ResponseType, UserRole, AgentType } from 'src/types';
+import regex from './regex';
 
 const userRoles = ["admin", "editor", "viewer"] as UserRole[];
 
@@ -130,6 +131,7 @@ const initialPositionY = 0;
 const sideNavWidth = 200;
 
 const constants = {
+    regex,
     userRoles,
     agentTypes,
     agentModels,

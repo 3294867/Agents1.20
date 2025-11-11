@@ -19,54 +19,48 @@ const ProtectedApp = () => {
     const { userId, isLoading } = hooks.components.useAuthContext();
     hooks.features.useHandleTheme();
 
-    const router = useMemo(
-        () =>
-            createBrowserRouter([
-                userId
-                    ? {
-                          path: "/",
-                          element: <Layout userId={userId} />,
-                          children: [
-                              {
-                                  path: "/",
-                                  element: <Navigate to="personal" />,
-                              },
-                              {
-                                  path: ":workspaceName",
-                                  element: <Workspace />,
-                                  children: [
-                                      {
-                                          path: ":agentName",
-                                          element: <Agent />,
-                                          children: [
-                                              {
-                                                  path: ":threadId",
-                                                  element: <Thread />,
-                                              },
-                                          ],
-                                      },
-                                  ],
-                              },
-                              {
-                                  path: "sign-up",
-                                  element: <Navigate to="/personal/general" />,
-                              },
-                              {
-                                  path: "login",
-                                  element: <Navigate to="/personal/general" />,
-                              },
-                          ],
-                      }
-                    : {
-                          path: "/*",
-                          element: <Navigate to="/log-in" />,
-                      },
+    const router = useMemo(() => createBrowserRouter([
+        userId ? {
+                path: "/",
+                element: <Layout userId={userId} />,
+                children: [
+                    {
+                        path: "/",
+                        element: <Navigate to="personal" />,
+                    },
+                    {
+                        path: ":workspaceName",
+                        element: <Workspace />,
+                        children: [
+                            {
+                                path: ":agentName",
+                                element: <Agent />,
+                                children: [
+                                    {
+                                        path: ":threadId",
+                                        element: <Thread />,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        path: "sign-up",
+                        element: <Navigate to="/personal/general" />,
+                    },
+                    {
+                        path: "login",
+                        element: <Navigate to="/personal/general" />,
+                    },
+                ],
+            }   :   {
+                path: "/*",
+                element: <Navigate to="/log-in" />,
+            },
 
-                { path: "/sign-up", element: <SignUpForm /> },
-                { path: "/log-in", element: <LogInForm /> },
-            ]),
-        [userId],
-    );
+            { path: "/sign-up", element: <SignUpForm /> },
+            { path: "/log-in", element: <LogInForm /> },
+    ]),[userId]);
 
     if (isLoading) return null;
 

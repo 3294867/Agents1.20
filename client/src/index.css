@@ -93,9 +93,7 @@
     --color-background-tooltip: var(--background-tooltip);
     --color-background-card-tooltip: var(--background-card-tooltip);
 
-    --color-background-dropdown-button-hover: var(
-        --background-dropdown-button-hover
-    );
+    --color-background-dropdown-button-hover: var(--background-dropdown-button-hover);
     --color-background-is-pressed-button: var(--background-is-pressed-button);
 
     --color-text-primary: var(--text-primary);

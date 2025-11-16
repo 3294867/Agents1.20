@@ -33,7 +33,7 @@ const Question = memo(({ reqres }: { reqres: ReqRes }) => {
     return (
         <QuestionContext.Provider value={context}>
             <div className={styles.container}>
-                <div className={styles.actionButtons}>
+                <div className={styles.actionButtonsOutside}>
                     <EditButton />
                     <DeleteButton />
                     <MoveButton />

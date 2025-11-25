@@ -35,6 +35,7 @@ import getNotifications from "./getNotifications";
 import acceptWorkspaceInvite from "./acceptWorkspaceInvite";
 import declineWorkspaceInvite from "./declineWorkspaceInvite";
 import dismissWorkspaceInvite from "./dismissWorkspaceInvite";
+import updateReqRes from './updateReqRes';
 
 const controllers = {
     addAgent,
@@ -74,6 +75,7 @@ const controllers = {
     acceptWorkspaceInvite,
     declineWorkspaceInvite,
     dismissWorkspaceInvite,
+    updateReqRes
 };
 
 export default controllers;

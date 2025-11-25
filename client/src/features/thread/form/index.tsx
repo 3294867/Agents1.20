@@ -27,6 +27,7 @@ const Form = () => {
         e.preventDefault();
 
         setInput("");
+        let response: string = "";
 
         const [reqResIds, agentType, responseType] = await Promise.all([
             express.addReqRes({ threadId, requestBody: input }),
@@ -34,22 +35,52 @@ const Form = () => {
             fastAPI.blocks.inferResponseType({ prompt: input }),
         ]);
 
-        const props = {
+        await indexedDB.addReqRes({
             threadId,
-            agentModel,
-            agentSystemInstructions,
-            prompt: input,
-            requestId: reqResIds.requestId,
-            responseId: reqResIds.responseId,
-            inferredAgentType: agentType,
-        };
+            reqres: {
+                requestId: reqResIds.requestId,
+                requestBody: input,
+                responseId: reqResIds.responseId, 
+                responseBody: [],
+                inferredAgentType: agentType
+            }
+        });
 
         if (responseType === "text") {
-            await fastAPI.createTextResponse(props);
+            const textResponse = fastAPI.createTextResponse({
+                agentModel,
+                agentSystemInstructions,
+                prompt: input
+            });
+    
+            for await (const chunk of textResponse) {
+                response += chunk;
+                await indexedDB.updateReqRes({
+                    threadId,
+                    reqres: {
+                        requestId: reqResIds.requestId,
+                        requestBody: input,
+                        responseId: reqResIds.responseId,
+                        responseBody: [{
+                            type: responseType,
+                            content: response
+                        }],
+                        inferredAgentType: agentType
+                    }
+                });
+            }
+
+            await express.updateReqRes({
+                threadId,
+                responseBody: [{
+                    type: responseType,
+                    content: response
+                }]
+            });
         } else if (responseType === "bullet-list") {
-            await fastAPI.createBulletListResponse(props);
+            // TODO: createBulletListResponse()
         } else {
-            await fastAPI.createTableResponse(props);
+            // TODO: createTableResponse()
         }
 
         if (threadBodyLength === 0) {

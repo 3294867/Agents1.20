@@ -21,7 +21,7 @@ app.include_router(api_router)
 def root():
     return {"message": "Server is running"}
 
-@app.websocket("/api/ws")
+@app.websocket("/api/create-text-response")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     print("Client connected")
@@ -29,7 +29,6 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             raw_data = await websocket.receive_text()
-            print("Received:", raw_data)
             parsed_data = json.loads(raw_data)
             props = ResponseRequest(**parsed_data)
 

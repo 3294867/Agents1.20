@@ -31,6 +31,7 @@ import getNotifications from "src/routes/express/getNotifications";
 import acceptWorkspaceInvite from "src/routes/express/acceptWorkspaceInvite";
 import declineWorkspaceInvite from "src/routes/express/declineWorkspaceInvite";
 import dismissWorkspaceInvite from "src/routes/express/dismissWorkspaceInvite";
+import updateReqRes from 'src/routes/express/updateReqRes';
 
 const express = {
     auth,
@@ -66,6 +67,7 @@ const express = {
     acceptWorkspaceInvite,
     declineWorkspaceInvite,
     dismissWorkspaceInvite,
+    updateReqRes
 };
 
 export default express;

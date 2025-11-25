@@ -12,23 +12,23 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
     const { threadId, requestBody }: RequestBody = req.body;
 
     const validationError = utils.validate.addReqRes({ threadId, requestBody });
-    if (validationError)
+    if (validationError) {
         return utils.sendResponse({
             res,
             status: 400,
             message: validationError,
         });
+    }
 
     try {
         await pool.query(`BEGIN`);
 
         /** Request */
-        const addRequest = await pool.query(
-            `
-      INSERT INTO requests (body)
-      VALUES ($1::text)
-      RETURNING id;
-    `,
+        const addRequest = await pool.query(`
+            INSERT INTO requests (body)
+            VALUES ($1::text)
+            RETURNING id;
+        `,
             [requestBody],
         );
         if (addRequest.rows.length === 0) {
@@ -40,12 +40,11 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
             });
         }
 
-        const addThreadRequest = await pool.query(
-            `
-      INSERT INTO thread_request (thread_id, request_id)
-      VALUES ($1::uuid, $2::uuid)
-      RETURNING thread_id;
-    `,
+        const addThreadRequest = await pool.query(`
+            INSERT INTO thread_request (thread_id, request_id)
+            VALUES ($1::uuid, $2::uuid)
+            RETURNING thread_id;
+        `,
             [threadId, addRequest.rows[0].id],
         );
         if (addThreadRequest.rows.length === 0) {
@@ -59,10 +58,10 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
 
         /** Response */
         const addResponse = await pool.query(`
-      INSERT INTO responses (id)
-      VALUES (gen_random_uuid()::uuid)
-      RETURNING id;
-    `);
+            INSERT INTO responses (id)
+            VALUES (gen_random_uuid()::uuid)
+            RETURNING id;
+        `);
         if (addResponse.rows.length === 0) {
             await pool.query(`ROLLBACK`);
             return utils.sendResponse({
@@ -72,12 +71,11 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
             });
         }
 
-        const addThreadResponse = await pool.query(
-            `
-      INSERT INTO thread_response (thread_id, response_id)
-      VALUES ($1::uuid, $2::uuid)
-      RETURNING thread_id;
-    `,
+        const addThreadResponse = await pool.query(`
+            INSERT INTO thread_response (thread_id, response_id)
+            VALUES ($1::uuid, $2::uuid)
+            RETURNING thread_id;
+        `,
             [threadId, addResponse.rows[0].id],
         );
         if (addThreadResponse.rows.length === 0) {
@@ -90,12 +88,11 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
         }
 
         /** Thread */
-        const getThreadBody = await pool.query(
-            `
-      SELECT body
-      FROM threads
-      WHERE id = $1::uuid;
-    `,
+        const getThreadBody = await pool.query(`
+            SELECT body
+            FROM threads
+            WHERE id = $1::uuid;
+        `,
             [threadId],
         );
         if (getThreadBody.rows.length === 0) {
@@ -115,13 +112,12 @@ const addReqRes = async (req: Request, res: Response): Promise<void> => {
             },
         ];
 
-        const updateThread = await pool.query(
-            `
-      UPDATE threads
-      SET body = $1::jsonb
-      WHERE id = $2::uuid
-      RETURNING id;
-    `,
+        const updateThread = await pool.query(`
+            UPDATE threads
+            SET body = $1::jsonb
+            WHERE id = $2::uuid
+            RETURNING id;
+        `,
             [JSON.stringify(newThreadBody), threadId],
         );
         if (updateThread.rows.length === 0) {

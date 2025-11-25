@@ -1,127 +1,53 @@
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { AgentModel, AgentType, ReqRes } from "src/types";
-import indexedDB from "src/storage/indexedDB";
-import express from "src/routes/express";
+import { AgentModel } from 'src/types';
 
 interface Props {
-    threadId: string;
     agentModel: AgentModel;
     agentSystemInstructions: string;
     prompt: string;
-    requestId: string;
-    responseId: string;
-    inferredAgentType: AgentType;
 }
 
-const createTextResponse = async ({
-    threadId,
-    agentModel,
-    agentSystemInstructions,
-    prompt,
-    requestId,
-    responseId,
-    inferredAgentType,
-}: Props) => {
-    let accumulatedResponse = "";
+const createTextResponse = ({agentModel, agentSystemInstructions, prompt}: Props) => {
+    const ws = new WebSocket(`${import.meta.env.VITE_FASTAPI_URL}/api/create-text-response`);
+    
+    return (async function* streamGenerator() {
+        const queue: string[] = [];
+        let resolveQueuePromise: (() => void) | null = null;
 
-    await fetchEventSource(
-        `${import.meta.env.VITE_FASTAPI_URL}/api/create-text-response`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                agentModel,
-                agentSystemInstructions,
-                prompt,
-            }),
+        const queuePromise = () =>
+            new Promise<void>((res) => {
+                resolveQueuePromise = res;
+            });
 
-            onmessage(ev) {
-                if (ev.data === "[START]") {
-                    const onStart = async () => {
-                        await indexedDB.addReqRes({
-                            threadId: threadId,
-                            reqres: {
-                                requestId,
-                                requestBody: prompt,
-                                responseId,
-                                responseBody: [],
-                                inferredAgentType,
-                            } as ReqRes,
-                        });
-                    };
-                    onStart();
-                } else if (ev.data === "[DONE]") {
-                    const onDone = async () => {
-                        await express.updateResponseBody({
-                            responseId,
-                            responseBody: [
-                                { type: "text", content: accumulatedResponse },
-                            ],
-                        });
-                    };
-                    onDone();
-                } else if (ev.data.startsWith("[ERROR]")) {
-                    accumulatedResponse += ev.data;
-                    const onError = async () => {
-                        await indexedDB.updateReqRes({
-                            threadId: threadId,
-                            reqres: {
-                                requestId,
-                                requestBody: prompt,
-                                responseId,
-                                responseBody: [
-                                    {
-                                        type: "text",
-                                        content: accumulatedResponse,
-                                    },
-                                ],
-                                inferredAgentType,
-                            } as ReqRes,
-                        });
-                    };
-                    onError();
-                } else {
-                    accumulatedResponse += ev.data;
-                    const onToken = async () => {
-                        await indexedDB.updateReqRes({
-                            threadId: threadId,
-                            reqres: {
-                                requestId,
-                                requestBody: prompt,
-                                responseId,
-                                responseBody: [
-                                    {
-                                        type: "text",
-                                        content: accumulatedResponse,
-                                    },
-                                ],
-                                inferredAgentType,
-                            } as ReqRes,
-                        });
-                    };
-                    onToken();
-                }
-            },
+        ws.onmessage = (event) => {
+            queue.push(event.data);
+            resolveQueuePromise?.();
+        };
 
-            onerror(e) {
-                accumulatedResponse += e;
-                const onError = async () => {
-                    await indexedDB.updateReqRes({
-                        threadId: threadId,
-                        reqres: {
-                            requestId,
-                            requestBody: prompt,
-                            responseId,
-                            responseBody: [
-                                { type: "text", content: accumulatedResponse },
-                            ],
-                            inferredAgentType,
-                        } as ReqRes,
-                    });
-                };
-                onError();
-            },
-        },
-    );
+        ws.onopen = () => {
+            ws.send(
+                JSON.stringify({
+                    agentModel,
+                    agentSystemInstructions,
+                    prompt,
+                })
+            );
+        };
+
+        let closed = false;
+        ws.onclose = () => {
+            closed = true;
+            resolveQueuePromise?.();
+        };
+
+        while (!closed || queue.length > 0) {
+            if (queue.length === 0) {
+                await queuePromise();
+            }
+            while (queue.length > 0) {
+                yield queue.shift()!;
+            }
+        }
+    })();
 };
 
 export default createTextResponse;

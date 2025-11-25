@@ -11,7 +11,7 @@ const addReqRes = ({ threadId, requestBody }: Props): string | null => {
     }
 
     if (!utils.regex.isUuidV4(threadId)) {
-        return "Incorrect format of userId. Expected UUID_V4";
+        return "Incorrect format of threadId. Expected UUID_V4";
     }
 
     return null;

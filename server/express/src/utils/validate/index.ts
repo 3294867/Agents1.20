@@ -35,11 +35,13 @@ import getNotifications from "./getNotifications";
 import acceptWorkspaceInvite from "./acceptWorkspaceInvite";
 import declineWorkspaceInvite from "./declineWorkspaceInvite";
 import dismissWorkspaceInvite from "./dismissWorkspaceInvite";
+import updateReqRes from './updateReqRes';
 
 const validate = {
     addAgent,
     addPublicThread,
     addReqRes,
+    updateReqRes,
     addThread,
     createResponse,
     deleteReqRes,

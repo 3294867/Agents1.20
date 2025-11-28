@@ -52,8 +52,10 @@ const Form = () => {
                 agentSystemInstructions,
                 prompt: input
             });
-    
+
+            
             for await (const chunk of textResponse) {
+                console.log("form: textResponse: ", textResponse)
                 response += chunk;
                 await indexedDB.updateReqRes({
                     threadId,

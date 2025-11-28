@@ -1,7 +1,7 @@
 import asyncio
 from ..utils.get_client import get_client
 
-async def create_text_response(agentModel, agentSystemInstructions, prompt: str) -> str:
+async def create_text_response(agentModel: str, agentSystemInstructions: str, prompt: str) -> str:
     async def event_generator():
         try:
             async with get_client().responses.stream(

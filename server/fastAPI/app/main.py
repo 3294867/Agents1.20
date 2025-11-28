@@ -24,8 +24,6 @@ def root():
 @app.websocket("/api/create-text-response")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    print("Client connected")
-
     try:
         while True:
             raw_data = await websocket.receive_text()

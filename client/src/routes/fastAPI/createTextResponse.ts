@@ -1,4 +1,5 @@
 import { AgentModel } from 'src/types';
+import utils from 'src/utils';
 
 interface Props {
     agentModel: AgentModel;
@@ -8,46 +9,11 @@ interface Props {
 
 const createTextResponse = ({agentModel, agentSystemInstructions, prompt}: Props) => {
     const ws = new WebSocket(`${import.meta.env.VITE_FASTAPI_URL}/api/create-text-response`);
-    
-    return (async function* streamGenerator() {
-        const queue: string[] = [];
-        let resolveQueuePromise: (() => void) | null = null;
-
-        const queuePromise = () =>
-            new Promise<void>((res) => {
-                resolveQueuePromise = res;
-            });
-
-        ws.onmessage = (event) => {
-            queue.push(event.data);
-            resolveQueuePromise?.();
-        };
-
-        ws.onopen = () => {
-            ws.send(
-                JSON.stringify({
-                    agentModel,
-                    agentSystemInstructions,
-                    prompt,
-                })
-            );
-        };
-
-        let closed = false;
-        ws.onclose = () => {
-            closed = true;
-            resolveQueuePromise?.();
-        };
-
-        while (!closed || queue.length > 0) {
-            if (queue.length === 0) {
-                await queuePromise();
-            }
-            while (queue.length > 0) {
-                yield queue.shift()!;
-            }
-        }
-    })();
+    const gen = utils.features.createStreamGenerator({
+        ws,
+        body: {agentModel, agentSystemInstructions, prompt}
+    })
+    return gen;
 };
 
 export default createTextResponse;

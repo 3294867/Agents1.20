@@ -46,44 +46,38 @@ const Form = () => {
             }
         });
 
-        if (responseType === "text") {
-            const textResponse = fastAPI.createTextResponse({
-                agentModel,
-                agentSystemInstructions,
-                prompt: input
-            });
+        const stream = fastAPI.createResponse({
+            responseType,
+            agentModel,
+            agentSystemInstructions,
+            prompt: input
+        });
 
-            
-            for await (const chunk of textResponse) {
-                console.log("form: textResponse: ", textResponse)
-                response += chunk;
-                await indexedDB.updateReqRes({
-                    threadId,
-                    reqres: {
-                        requestId: reqResIds.requestId,
-                        requestBody: input,
-                        responseId: reqResIds.responseId,
-                        responseBody: [{
-                            type: responseType,
-                            content: response
-                        }],
-                        inferredAgentType: agentType
-                    }
-                });
-            }
-
-            await express.updateReqRes({
+        for await (const chunk of stream) {
+            response += chunk;
+            console.log(response);
+            await indexedDB.updateReqRes({
                 threadId,
-                responseBody: [{
-                    type: responseType,
-                    content: response
-                }]
+                reqres: {
+                    requestId: reqResIds.requestId,
+                    requestBody: input,
+                    responseId: reqResIds.responseId,
+                    responseBody: [{
+                        type: responseType,
+                        content: response
+                    }],
+                    inferredAgentType: agentType
+                }
             });
-        } else if (responseType === "bullet-list") {
-            // TODO: createBulletListResponse()
-        } else {
-            // TODO: createTableResponse()
         }
+
+        await express.updateReqRes({
+            threadId,
+            responseBody: [{
+                type: responseType,
+                content: response
+            }]
+        });
 
         if (threadBodyLength === 0) {
             const threadName = await fastAPI.blocks.createThreadName({

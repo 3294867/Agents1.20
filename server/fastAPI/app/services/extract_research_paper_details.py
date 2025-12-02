@@ -8,14 +8,12 @@ class ResearchPaperExtraction(BaseModel):
     keywords: list[str]
 
 async def extract_research_paper_details():
-    client = get_client()
-
-    pdf = await client.files.create(
+    pdf = await get_client().files.create(
         file=open("./app/services/sample.pdf", "rb"),
         purpose="user_data"
     )
 
-    response = await client.responses.parse(
+    response = await get_client().responses.parse(
         model="gpt-4o-2024-08-06",
         input=[
             {

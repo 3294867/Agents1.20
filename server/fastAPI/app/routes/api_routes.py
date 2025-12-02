@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from app.models.request_models import ( Request, ResponseRequest )
 from app.services.infer_agent_type import infer_agent_type
@@ -10,6 +10,7 @@ from app.services.create_bullet_list import create_bullet_list
 from app.services.create_table import create_table
 from app.services.create_outro import create_outro
 from app.services.extract_research_paper_details import extract_research_paper_details
+from app.responses.create_response import create_response
 
 router = APIRouter(prefix="/api", tags=["API Endpoints"])
 
@@ -28,6 +29,15 @@ async def infer_response_type_endpoint(request: Request):
         return {"message": "Success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.websocket("/create-response")
+async def create_response_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        await create_response(websocket)
+    except WebSocketDisconnect:
+        print("Client disconnected")
+        
 
 @router.post("/create-text-response")
 async def create_text_response_endpoint(request: ResponseRequest):
@@ -80,7 +90,6 @@ async def create_table_endpoint(request: Request):
         return {"message": "Success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
     
 @router.post("/create-thread-name")
 async def create_thread_name_endpoint(request: Request):
@@ -97,3 +106,4 @@ async def extract_research_paper_details_endpoint():
         return {"message": "Success", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
